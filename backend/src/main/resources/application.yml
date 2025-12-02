@@ -1,0 +1,194 @@
+# =============================================================================
+# Spring Boot Application Configuration
+# Payment Gateway Integration System
+# =============================================================================
+
+spring:
+  # ชื่อ Application
+  application:
+    name: payment-gateway
+
+  # ==========================================================================
+  # Virtual Threads Configuration (Java 21)
+  # เปิดใช้งาน Virtual Threads สำหรับ Performance ที่ดีขึ้น
+  # ==========================================================================
+  threads:
+    virtual:
+      enabled: true
+
+  # ==========================================================================
+  # Database Configuration (MySQL 8.0)
+  # ==========================================================================
+  datasource:
+    # URL จะถูก Override โดย Environment Variable ใน Docker
+    url: jdbc:mysql://localhost:3306/payment_gateway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Bangkok
+    username: payment_user
+    password: payment_secret
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    # HikariCP Connection Pool Settings
+    hikari:
+      pool-name: PaymentHikariPool
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1200000
+
+  # ==========================================================================
+  # JPA / Hibernate Configuration
+  # ==========================================================================
+  jpa:
+    # ใช้ Hibernate
+    hibernate:
+      # ddl-auto: update จะสร้าง/อัพเดท Tables อัตโนมัติ
+      ddl-auto: update
+
+    # แสดง SQL Queries ใน Console (Development)
+    show-sql: true
+
+    # Hibernate Properties
+    properties:
+      hibernate:
+        # Format SQL ให้อ่านง่าย
+        format_sql: true
+        # MySQL 8 Dialect
+        dialect: org.hibernate.dialect.MySQLDialect
+        # Timezone
+        jdbc:
+          time_zone: Asia/Bangkok
+
+  # ==========================================================================
+  # Redis Configuration (Caching)
+  # ==========================================================================
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 2
+          max-wait: 1000ms
+
+  # ==========================================================================
+  # Cache Configuration
+  # ==========================================================================
+  cache:
+    type: redis
+    redis:
+      # TTL สำหรับ Cache (10 นาที)
+      time-to-live: 600000
+      # ใช้ Key Prefix
+      key-prefix: payment-gateway::
+      use-key-prefix: true
+      # Cache Null Values
+      cache-null-values: false
+
+  # ==========================================================================
+  # Jackson JSON Configuration
+  # ==========================================================================
+  jackson:
+    # Date Format
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Bangkok
+    # ไม่ Serialize Null Values
+    default-property-inclusion: non_null
+
+# =============================================================================
+# Server Configuration
+# =============================================================================
+server:
+  port: 8080
+
+  # Error Handling - ใช้ ProblemDetail (RFC 7807)
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: never
+    include-exception: false
+
+# =============================================================================
+# Actuator Configuration (Health Checks & Monitoring)
+# =============================================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        # เปิด Endpoints ที่ต้องการ
+        include: health,info,metrics
+      base-path: /actuator
+
+  endpoint:
+    health:
+      # แสดงรายละเอียด Health Check
+      show-details: always
+      show-components: always
+
+  # Health Indicators
+  health:
+    db:
+      enabled: true
+    diskspace:
+      enabled: true
+
+# =============================================================================
+# Logging Configuration
+# =============================================================================
+logging:
+  level:
+    # Root Level
+    root: INFO
+    # Application Package
+    com.payment.gateway: DEBUG
+    # SQL Logging
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+  # Log Pattern
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# =============================================================================
+# Custom Application Properties
+# =============================================================================
+payment:
+  webhook:
+    # Secret Key สำหรับ HMAC-SHA256 Signature Verification
+    # จะถูก Override โดย Environment Variable ใน Production
+    secret: ${PAYMENT_WEBHOOK_SECRET:default-secret-change-in-production}
+
+  # API Settings
+  api:
+    # Base Path สำหรับ API
+    base-path: /api/v1
+
+# =============================================================================
+# SpringDoc OpenAPI / Swagger Configuration
+# =============================================================================
+springdoc:
+  api-docs:
+    # เปิดใช้งาน OpenAPI docs
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    # เปิดใช้งาน Swagger UI
+    enabled: true
+    path: /swagger-ui.html
+    # แสดง Request Duration
+    display-request-duration: true
+    # แสดง Operations ที่ขยายได้
+    doc-expansion: list
+    # เรียงตาม Method
+    operations-sorter: method
+    # เรียงตาม Tag
+    tags-sorter: alpha
+  # กลุ่ม API
+  group-configs:
+    - group: payment-gateway-api
+      paths-to-match:
+        - /api/v1/**
+      display-name: Payment Gateway API

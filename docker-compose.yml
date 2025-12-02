@@ -1,0 +1,147 @@
+# =============================================================================
+# Docker Compose สำหรับ Payment Gateway Integration System
+# รวม MySQL Database, Redis Cache, Spring Boot Backend และ Angular Frontend
+# =============================================================================
+
+services:
+  # ===========================================================================
+  # MySQL Database Service
+  # ใช้ MySQL 8.0 พร้อม Volume สำหรับเก็บข้อมูลถาวร
+  # ===========================================================================
+  mysql-db:
+    image: mysql:8.0
+    container_name: payment-mysql
+    restart: unless-stopped
+    environment:
+      # ตั้งค่า Root Password และ Database เริ่มต้น
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-payment_gateway}
+      MYSQL_USER: ${MYSQL_USER:-payment_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-payment_secret}
+    ports:
+      - "3306:3306"
+    volumes:
+      # Volume สำหรับเก็บข้อมูล MySQL ถาวร
+      - mysql_data:/var/lib/mysql
+      # Script สำหรับ Initialize Database
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - payment-network
+    healthcheck:
+      # ตรวจสอบสถานะ MySQL ด้วย mysqladmin ping
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${MYSQL_ROOT_PASSWORD:-rootpassword}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ===========================================================================
+  # Redis Cache Service
+  # ใช้ Redis 7 Alpine สำหรับ Caching
+  # ===========================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: payment-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      # Volume สำหรับ Persistence
+      - redis_data:/data
+    networks:
+      - payment-network
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ===========================================================================
+  # Spring Boot Backend Service
+  # Java 21 พร้อม Virtual Threads
+  # ===========================================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: payment-backend
+    restart: unless-stopped
+    environment:
+      # Database Connection
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/${MYSQL_DATABASE:-payment_gateway}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Bangkok
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-payment_user}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-payment_secret}
+      # Redis Connection
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      # JPA Settings
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      # Virtual Threads - เปิดใช้งาน Java 21 Virtual Threads
+      SPRING_THREADS_VIRTUAL_ENABLED: "true"
+      # Payment Gateway Security
+      PAYMENT_WEBHOOK_SECRET: ${PAYMENT_WEBHOOK_SECRET:-your-webhook-secret-key}
+      # Server Settings
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    networks:
+      - payment-network
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      # ตรวจสอบสถานะ Backend ผ่าน Actuator Health Endpoint
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ===========================================================================
+  # Angular Frontend Service
+  # Angular 21 พร้อม Nginx สำหรับ Production
+  # ===========================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: payment-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - payment-network
+    depends_on:
+      - backend
+
+# =============================================================================
+# Networks - สร้าง Bridge Network สำหรับการสื่อสารระหว่าง Containers
+# =============================================================================
+networks:
+  payment-network:
+    driver: bridge
+    name: payment-gateway-network
+
+# =============================================================================
+# Volumes - Volume สำหรับเก็บข้อมูลถาวร
+# =============================================================================
+volumes:
+  mysql_data:
+    name: payment-mysql-data
+  redis_data:
+    name: payment-redis-data
