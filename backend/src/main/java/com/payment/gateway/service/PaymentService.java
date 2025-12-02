@@ -142,14 +142,27 @@ public class PaymentService {
     }
 
     /**
-     * ดึงรายการ Payment ทั้งหมด (พร้อม Pagination)
+     * ดึงรายการ Payment ทั้งหมด (พร้อม Pagination, Search และ Status)
      * 
+     * @param search คำค้นหา (optional)
+     * @param status สถานะ (optional)
      * @param pageable Pagination
      * @return Page ของ PaymentSummary
      */
     @Transactional(readOnly = true)
-    public PageResponse<PaymentSummary> getAllPayments(Pageable pageable) {
-        Page<Payment> page = paymentRepository.findAll(pageable);
+    public PageResponse<PaymentSummary> getAllPayments(String search, PaymentStatus status, Pageable pageable) {
+        Page<Payment> page;
+        boolean hasSearch = search != null && !search.trim().isEmpty();
+        
+        if (hasSearch && status != null) {
+            page = paymentRepository.findByStatusAndSearchTerm(status, search.trim(), pageable);
+        } else if (hasSearch) {
+            page = paymentRepository.findBySearchTerm(search.trim(), pageable);
+        } else if (status != null) {
+            page = paymentRepository.findByStatusOrderByCreatedAtDesc(status, pageable);
+        } else {
+            page = paymentRepository.findAll(pageable);
+        }
         return toPageResponse(page);
     }
 

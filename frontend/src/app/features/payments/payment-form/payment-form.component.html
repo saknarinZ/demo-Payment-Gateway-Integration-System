@@ -1,0 +1,205 @@
+<div class="payment-form-container">
+  <!-- Back Button -->
+  <div class="back-nav">
+    <a routerLink="/payments" class="back-link">← กลับไปยังรายการ Payment</a>
+  </div>
+
+  <!-- Form Card -->
+  <div class="form-card">
+    <div class="card-header">
+      <h1>สร้าง Payment ใหม่</h1>
+      <p>กรอกข้อมูลเพื่อสร้าง Payment</p>
+    </div>
+
+    <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
+      <div class="card-body">
+        <!-- Customer Information Section -->
+        <section class="form-section">
+          <h2 class="section-title">ข้อมูลลูกค้า</h2>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="customerName"
+                >ชื่อลูกค้า <span class="required">*</span></label
+              >
+              <input
+                type="text"
+                id="customerName"
+                class="form-input"
+                formControlName="customerName"
+                placeholder="กรอกชื่อลูกค้า"
+                [class.error]="isFieldInvalid('customerName')"
+              />
+              @if (isFieldInvalid('customerName')) {
+              <span class="error-message">
+                @if (paymentForm.get('customerName')?.errors?.['required']) {
+                กรุณากรอกชื่อลูกค้า } @if
+                (paymentForm.get('customerName')?.errors?.['minlength']) {
+                ชื่อต้องมีอย่างน้อย 2 ตัวอักษร }
+              </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="customerEmail"
+                >อีเมล <span class="required">*</span></label
+              >
+              <input
+                type="email"
+                id="customerEmail"
+                class="form-input"
+                formControlName="customerEmail"
+                placeholder="email@example.com"
+                [class.error]="isFieldInvalid('customerEmail')"
+              />
+              @if (isFieldInvalid('customerEmail')) {
+              <span class="error-message">
+                @if (paymentForm.get('customerEmail')?.errors?.['required']) {
+                กรุณากรอกอีเมล } @if
+                (paymentForm.get('customerEmail')?.errors?.['email']) {
+                รูปแบบอีเมลไม่ถูกต้อง }
+              </span>
+              }
+            </div>
+          </div>
+        </section>
+
+        <!-- Payment Information Section -->
+        <section class="form-section">
+          <h2 class="section-title">ข้อมูลการชำระเงิน</h2>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="amount"
+                >จำนวนเงิน <span class="required">*</span></label
+              >
+              <div class="input-with-prefix">
+                <input
+                  type="number"
+                  id="amount"
+                  class="form-input"
+                  formControlName="amount"
+                  placeholder="0.00"
+                  step="0.01"
+                  min="1"
+                  [class.error]="isFieldInvalid('amount')"
+                />
+                <select formControlName="currency" class="currency-select">
+                  <option value="THB">THB</option>
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                </select>
+              </div>
+              @if (isFieldInvalid('amount')) {
+              <span class="error-message">
+                @if (paymentForm.get('amount')?.errors?.['required']) {
+                กรุณากรอกจำนวนเงิน } @if
+                (paymentForm.get('amount')?.errors?.['min']) {
+                จำนวนเงินต้องมากกว่า 0 }
+              </span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label>วิธีชำระเงิน <span class="required">*</span></label>
+              <div class="payment-methods">
+                @for (method of paymentMethods; track method.value) {
+                <label
+                  class="method-option"
+                  [class.selected]="
+                    paymentForm.get('paymentMethod')?.value === method.value
+                  "
+                >
+                  <input
+                    type="radio"
+                    formControlName="paymentMethod"
+                    [value]="method.value"
+                  />
+                  <span class="method-icon">{{ method.icon }}</span>
+                  <span class="method-label">{{ method.label }}</span>
+                </label>
+                }
+              </div>
+              @if (isFieldInvalid('paymentMethod')) {
+              <span class="error-message">กรุณาเลือกวิธีชำระเงิน</span>
+              }
+            </div>
+          </div>
+        </section>
+
+        <!-- Additional Information Section -->
+        <section class="form-section">
+          <h2 class="section-title">ข้อมูลเพิ่มเติม</h2>
+
+          <div class="form-group full-width">
+            <label for="description">รายละเอียด (ไม่บังคับ)</label>
+            <textarea
+              id="description"
+              class="form-input"
+              formControlName="description"
+              placeholder="ระบุรายละเอียดเพิ่มเติม..."
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="callbackUrl">Callback URL (ไม่บังคับ)</label>
+            <input
+              type="url"
+              id="callbackUrl"
+              class="form-input"
+              formControlName="callbackUrl"
+              placeholder="https://your-website.com/callback"
+              [class.error]="isFieldInvalid('callbackUrl')"
+            />
+            @if (isFieldInvalid('callbackUrl')) {
+            <span class="error-message">รูปแบบ URL ไม่ถูกต้อง</span>
+            }
+            <small class="field-hint">
+              URL ที่จะได้รับแจ้งเตือนเมื่อสถานะ Payment เปลี่ยนแปลง
+            </small>
+          </div>
+        </section>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="card-footer">
+        <div class="form-summary">
+          @if (paymentForm.get('amount')?.value &&
+          paymentForm.get('currency')?.value) {
+          <span class="summary-label">ยอดรวม:</span>
+          <span class="summary-amount">
+            {{
+              formatAmount(
+                paymentForm.get("amount")?.value,
+                paymentForm.get("currency")?.value
+              )
+            }}
+          </span>
+          }
+        </div>
+
+        <div class="form-actions">
+          <a routerLink="/payments" class="btn btn-secondary">ยกเลิก</a>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="!paymentForm.valid || submitting()"
+          >
+            @if (submitting()) {
+            <span class="btn-loading"></span>
+            กำลังสร้าง... } @else { สร้าง Payment }
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Error Message -->
+  @if (error()) {
+  <div class="error-banner">
+    <p>❌ {{ error() }}</p>
+    <button class="btn-close" (click)="error.set(null)">✕</button>
+  </div>
+  }
+</div>

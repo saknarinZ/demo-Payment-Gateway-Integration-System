@@ -113,16 +113,13 @@ public class PaymentController {
             @Parameter(description = "จำนวน items ต่อหน้า")
             @RequestParam(defaultValue = "20") int size,
             @Parameter(description = "กรองตามสถานะ")
-            @RequestParam(required = false) PaymentStatus status) {
+            @RequestParam(required = false) PaymentStatus status,
+            @Parameter(description = "คำค้นหา (Reference ID, ชื่อลูกค้า, Email)")
+            @RequestParam(required = false) String search) {
         
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         
-        PageResponse<PaymentSummary> response;
-        if (status != null) {
-            response = paymentService.getPaymentsByStatus(status, pageable);
-        } else {
-            response = paymentService.getAllPayments(pageable);
-        }
+        PageResponse<PaymentSummary> response = paymentService.getAllPayments(search, status, pageable);
         
         return ResponseEntity.ok(response);
     }

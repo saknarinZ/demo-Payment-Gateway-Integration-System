@@ -1,0 +1,234 @@
+<div class="payment-detail-container">
+  <!-- Back Button -->
+  <div class="back-nav">
+    <a routerLink="/payments" class="back-link">← กลับไปยังรายการ Payment</a>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading()) {
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>กำลังโหลดข้อมูล...</p>
+  </div>
+  }
+
+  <!-- Error State -->
+  @if (error()) {
+  <div class="error-container">
+    <p class="error-message">❌ {{ error() }}</p>
+    <button class="btn btn-primary" (click)="loadPayment()">
+      ลองใหม่อีกครั้ง
+    </button>
+  </div>
+  }
+
+  <!-- Payment Detail -->
+  @if (payment(); as p) {
+  <div class="detail-grid">
+    <!-- Main Info Card -->
+    <div class="card main-info">
+      <div class="card-header">
+        <h1 class="payment-ref">{{ p.referenceId }}</h1>
+        <span class="status-badge" [class]="'status-' + p.status.toLowerCase()">
+          {{ getStatusLabel(p.status) }}
+        </span>
+      </div>
+
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-label">จำนวนเงิน</span>
+          <span class="info-value amount">
+            {{ formatAmount(p.amount, p.currency) }}
+          </span>
+        </div>
+
+        <div class="info-row">
+          <span class="info-label">วิธีชำระเงิน</span>
+          <span class="info-value">
+            {{ getPaymentMethodLabel(p.paymentMethod) }}
+          </span>
+        </div>
+
+        <div class="info-row">
+          <span class="info-label">วันที่สร้าง</span>
+          <span class="info-value">{{ formatDate(p.createdAt) }}</span>
+        </div>
+
+        @if (p.completedAt) {
+        <div class="info-row">
+          <span class="info-label">วันที่เสร็จสิ้น</span>
+          <span class="info-value">{{ formatDate(p.completedAt) }}</span>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Customer Info Card -->
+    <div class="card customer-info">
+      <div class="card-header">
+        <h2>ข้อมูลลูกค้า</h2>
+      </div>
+
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-label">ชื่อลูกค้า</span>
+          <span class="info-value">{{ p.customerName }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="info-label">อีเมล</span>
+          <span class="info-value">{{ p.customerEmail }}</span>
+        </div>
+
+        @if (p.description) {
+        <div class="info-row">
+          <span class="info-label">รายละเอียด</span>
+          <span class="info-value">{{ p.description }}</span>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Actions Card -->
+    <div class="card actions-card">
+      <div class="card-header">
+        <h2>การดำเนินการ</h2>
+      </div>
+
+      <div class="card-body">
+        @switch (p.status) { @case ('PENDING') {
+        <div class="action-buttons">
+          <button
+            class="btn btn-success btn-full"
+            (click)="completePayment()"
+            [disabled]="actionLoading()"
+          >
+            ✓ ยืนยันการชำระเงิน
+          </button>
+          <button
+            class="btn btn-danger btn-full"
+            (click)="cancelPayment()"
+            [disabled]="actionLoading()"
+          >
+            ✕ ยกเลิกการชำระเงิน
+          </button>
+        </div>
+        } @case ('COMPLETED') {
+        <div class="action-buttons">
+          <button
+            class="btn btn-warning btn-full"
+            (click)="showRefundForm.set(true)"
+            [disabled]="actionLoading() || showRefundForm()"
+          >
+            ↩ คืนเงิน (Refund)
+          </button>
+        </div>
+
+        @if (showRefundForm()) {
+        <div class="refund-form">
+          <h3>ฟอร์มคืนเงิน</h3>
+          <div class="form-group">
+            <label>จำนวนเงินที่ต้องการคืน</label>
+            <input
+              type="number"
+              class="form-input"
+              [value]="refundAmount()"
+              (input)="onRefundAmountChange($event)"
+              [max]="p.amount"
+              min="0.01"
+              step="0.01"
+            />
+            <small>สูงสุด: {{ formatAmount(p.amount, p.currency) }}</small>
+          </div>
+          <div class="form-group">
+            <label>เหตุผลในการคืนเงิน</label>
+            <textarea
+              class="form-input"
+              rows="3"
+              [value]="refundReason()"
+              (input)="onRefundReasonChange($event)"
+              placeholder="ระบุเหตุผล..."
+            ></textarea>
+          </div>
+          <div class="action-buttons">
+            <button
+              class="btn btn-warning"
+              (click)="processRefund()"
+              [disabled]="actionLoading() || !isRefundValid()"
+            >
+              ยืนยันคืนเงิน
+            </button>
+            <button
+              class="btn btn-secondary"
+              (click)="showRefundForm.set(false)"
+            >
+              ยกเลิก
+            </button>
+          </div>
+        </div>
+        } } @case ('CANCELLED') {
+        <div class="status-message">
+          <p>❌ Payment นี้ถูกยกเลิกแล้ว</p>
+        </div>
+        } @case ('REFUNDED') {
+        <div class="status-message">
+          <p>↩ Payment นี้ได้รับการคืนเงินแล้ว</p>
+        </div>
+        } @case ('FAILED') {
+        <div class="status-message">
+          <p>⚠️ Payment นี้ล้มเหลว</p>
+        </div>
+        } @default {
+        <div class="status-message">
+          <p>⏳ กำลังดำเนินการ...</p>
+        </div>
+        } }
+      </div>
+    </div>
+
+    <!-- Transactions Card -->
+    <div class="card transactions-card">
+      <div class="card-header">
+        <h2>ประวัติ Transactions</h2>
+      </div>
+
+      <div class="card-body">
+        @if (p.transactions && p.transactions.length > 0) {
+        <div class="transactions-list">
+          @for (tx of p.transactions; track tx.transactionId) {
+          <div class="transaction-item">
+            <div class="tx-header">
+              <span class="tx-type" [class]="'type-' + tx.type.toLowerCase()">
+                {{ getTransactionTypeLabel(tx.type) }}
+              </span>
+              <span
+                class="tx-status"
+                [class]="'status-' + tx.status.toLowerCase()"
+              >
+                {{ tx.status }}
+              </span>
+            </div>
+            <div class="tx-body">
+              <div class="tx-info">
+                <span class="tx-id">{{ tx.transactionId }}</span>
+                <span class="tx-amount">
+                  {{ formatAmount(tx.amount, p.currency) }}
+                </span>
+              </div>
+              <div class="tx-time">
+                {{ formatDate(tx.createdAt) }}
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+        } @else {
+        <div class="empty-transactions">
+          <p>ยังไม่มีประวัติ Transaction</p>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+</div>

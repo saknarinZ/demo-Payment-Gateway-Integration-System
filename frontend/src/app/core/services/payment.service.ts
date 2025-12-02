@@ -90,7 +90,12 @@ export class PaymentService {
   /**
    * โหลดรายการ Payment พร้อมอัพเดต State
    */
-  loadPayments(page = 0, size = 20, status?: PaymentStatus): void {
+  loadPayments(
+    page = 0,
+    size = 20,
+    status?: PaymentStatus,
+    search?: string
+  ): void {
     this.loading.set(true);
     this.error.set(null);
 
@@ -100,6 +105,10 @@ export class PaymentService {
 
     if (status) {
       params = params.set("status", status);
+    }
+
+    if (search) {
+      params = params.set("search", search);
     }
 
     this.http
@@ -209,7 +218,8 @@ export class PaymentService {
   getPayments(
     page = 0,
     size = 20,
-    status?: PaymentStatus
+    status?: PaymentStatus,
+    search?: string
   ): Observable<PageResponse<PaymentSummary>> {
     let params = new HttpParams()
       .set("page", page.toString())
@@ -217,6 +227,10 @@ export class PaymentService {
 
     if (status) {
       params = params.set("status", status);
+    }
+
+    if (search) {
+      params = params.set("search", search);
     }
 
     return this.http

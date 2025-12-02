@@ -1,0 +1,179 @@
+<div class="payment-list-container">
+  <!-- Header Section -->
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">รายการ Payment</h1>
+      <p class="page-subtitle">
+        ทั้งหมด {{ paymentService.totalElements() }} รายการ
+      </p>
+    </div>
+    <div class="header-right">
+      <a routerLink="/create-payment" class="btn btn-primary">
+        + สร้าง Payment ใหม่
+      </a>
+    </div>
+  </header>
+
+  <!-- Filter Section -->
+  <section class="filter-section">
+    <div class="filter-group search-group">
+      <label class="filter-label">Search:</label>
+      <input
+        type="text"
+        class="filter-input"
+        placeholder="Reference ID, Name, Email"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="onSearch($event)"
+      />
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">Filter by Status:</label>
+      <select
+        class="filter-select"
+        [ngModel]="selectedStatus()"
+        (ngModelChange)="onStatusFilterChange($event)"
+      >
+        <option value="">ทั้งหมด</option>
+        @for (status of statusOptions; track status) {
+        <option [value]="status">{{ getStatusLabel(status) }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <button class="btn btn-secondary" (click)="refreshPayments()">
+        🔄 รีเฟรช
+      </button>
+    </div>
+  </section>
+
+  <!-- Loading State -->
+  @if (paymentService.loading()) {
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>กำลังโหลดข้อมูล...</p>
+  </div>
+  }
+
+  <!-- Error State -->
+  @if (paymentService.error()) {
+  <div class="error-container">
+    <p class="error-message">❌ {{ paymentService.error() }}</p>
+    <button class="btn btn-primary" (click)="refreshPayments()">
+      ลองใหม่อีกครั้ง
+    </button>
+  </div>
+  }
+
+  <!-- Payment Table -->
+  @if (!paymentService.loading() && !paymentService.error()) { @if
+  (paymentService.payments().length > 0) {
+  <div class="table-container">
+    <table class="payment-table">
+      <thead>
+        <tr>
+          <th>Reference ID</th>
+          <th>ชื่อลูกค้า</th>
+          <th>จำนวนเงิน</th>
+          <th>วิธีชำระเงิน</th>
+          <th>สถานะ</th>
+          <th>วันที่สร้าง</th>
+          <th>การดำเนินการ</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (payment of paymentService.payments(); track payment.referenceId) {
+        <tr>
+          <td class="ref-id">
+            <a [routerLink]="['/payments', payment.referenceId]">
+              {{ payment.referenceId }}
+            </a>
+          </td>
+          <td>{{ payment.customerName }}</td>
+          <td class="amount">
+            {{ formatAmount(payment.amount, payment.currency) }}
+          </td>
+          <td>
+            <span class="method-badge">
+              {{ getPaymentMethodLabel(payment.paymentMethod) }}
+            </span>
+          </td>
+          <td>
+            <span
+              class="status-badge"
+              [class]="'status-' + payment.status.toLowerCase()"
+            >
+              {{ getStatusLabel(payment.status) }}
+            </span>
+          </td>
+          <td>{{ formatDate(payment.createdAt) }}</td>
+          <td class="actions">
+            <a
+              [routerLink]="['/payments', payment.referenceId]"
+              class="btn btn-sm btn-outline"
+              title="ดูรายละเอียด"
+            >
+              👁️
+            </a>
+            @if (payment.status === 'PENDING') {
+            <button
+              class="btn btn-sm btn-success"
+              (click)="completePayment(payment.referenceId)"
+              title="ยืนยันการชำระเงิน"
+            >
+              ✓
+            </button>
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="cancelPayment(payment.referenceId)"
+              title="ยกเลิก"
+            >
+              ✕
+            </button>
+            }
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  @if (paymentService.totalPages() > 1) {
+  <div class="pagination">
+    <button
+      class="btn btn-sm btn-outline"
+      [disabled]="paymentService.currentPage() === 0"
+      (click)="goToPage(paymentService.currentPage() - 1)"
+    >
+      ← ก่อนหน้า
+    </button>
+
+    <div class="page-info">
+      หน้า {{ paymentService.currentPage() + 1 }} จาก
+      {{ paymentService.totalPages() }}
+    </div>
+
+    <button
+      class="btn btn-sm btn-outline"
+      [disabled]="
+        paymentService.currentPage() >= paymentService.totalPages() - 1
+      "
+      (click)="goToPage(paymentService.currentPage() + 1)"
+    >
+      ถัดไป →
+    </button>
+  </div>
+  } } @else {
+  <!-- Empty State -->
+  <div class="empty-state">
+    <div class="empty-icon">📋</div>
+    <h3>ไม่พบข้อมูล Payment</h3>
+    <p>ยังไม่มีรายการ Payment ในระบบ</p>
+    <a routerLink="/create-payment" class="btn btn-primary">
+      สร้าง Payment แรก
+    </a>
+  </div>
+  } }
+</div>

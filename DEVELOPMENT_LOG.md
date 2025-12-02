@@ -229,22 +229,25 @@ frontend/src/app/
 ### Phase 5: Redis Caching ✅ (เพิ่มใหม่)
 
 #### 5.1 Redis Configuration
+
 - [x] เพิ่ม Redis service ใน `docker-compose.yml`
 - [x] เพิ่ม dependencies ใน `pom.xml` (spring-boot-starter-data-redis, spring-boot-starter-cache)
 - [x] สร้าง `RedisConfig.java` - กำหนด CacheManager และ RedisTemplate
 
 #### 5.2 Cache Configuration
-| Cache Name | TTL | Description |
-|------------|-----|-------------|
-| `payments` | 5 นาที | Cache payment by ID |
-| `payment-by-ref` | 5 นาที | Cache payment by reference ID |
-| `merchants` | 30 นาที | Cache merchant data |
-| `merchant-by-apikey` | 30 นาที | Cache merchant by API key |
-| `dashboard-stats` | 1 นาที | Cache dashboard statistics |
-| `payment-list` | 2 นาที | Cache payment list |
-| `transactions` | 5 นาที | Cache transaction data |
+
+| Cache Name           | TTL     | Description                   |
+| -------------------- | ------- | ----------------------------- |
+| `payments`           | 5 นาที  | Cache payment by ID           |
+| `payment-by-ref`     | 5 นาที  | Cache payment by reference ID |
+| `merchants`          | 30 นาที | Cache merchant data           |
+| `merchant-by-apikey` | 30 นาที | Cache merchant by API key     |
+| `dashboard-stats`    | 1 นาที  | Cache dashboard statistics    |
+| `payment-list`       | 2 นาที  | Cache payment list            |
+| `transactions`       | 5 นาที  | Cache transaction data        |
 
 #### 5.3 Caching Annotations ที่ใช้
+
 - `@Cacheable` - Cache read operations
 - `@CacheEvict` - Clear cache on write
 - `@Caching` - Multiple cache operations
@@ -254,11 +257,13 @@ frontend/src/app/
 ### Phase 6: Swagger/OpenAPI Documentation ✅ (เพิ่มใหม่)
 
 #### 6.1 OpenAPI Configuration
+
 - [x] เพิ่ม dependency `springdoc-openapi-starter-webmvc-ui`
 - [x] สร้าง `OpenApiConfig.java` - กำหนด API documentation
 - [x] เพิ่ม annotations ให้ Controllers
 
 #### 6.2 Documentation Features
+
 - ✅ API Info (title, description, version)
 - ✅ Security Schemes (API Key header)
 - ✅ Server configurations (dev/prod)
@@ -268,10 +273,11 @@ frontend/src/app/
 - ✅ Error response formats (RFC 7807)
 
 #### 6.3 Access URLs
-| Resource | URL |
-|----------|-----|
-| Swagger UI | http://localhost:8080/swagger-ui.html |
-| OpenAPI JSON | http://localhost:8080/api-docs |
+
+| Resource     | URL                                   |
+| ------------ | ------------------------------------- |
+| Swagger UI   | http://localhost:8080/swagger-ui.html |
+| OpenAPI JSON | http://localhost:8080/api-docs        |
 
 ---
 
@@ -341,15 +347,15 @@ docker-compose down -v
 
 ### URLs
 
-| Service      | URL                                 |
-| ------------ | ----------------------------------- |
-| Frontend     | http://localhost:80                 |
-| Backend API  | http://localhost:8080/api/v1        |
+| Service      | URL                                   |
+| ------------ | ------------------------------------- |
+| Frontend     | http://localhost:80                   |
+| Backend API  | http://localhost:8080/api/v1          |
 | Swagger UI   | http://localhost:8080/swagger-ui.html |
-| OpenAPI JSON | http://localhost:8080/api-docs      |
+| OpenAPI JSON | http://localhost:8080/api-docs        |
 | Health Check | http://localhost:8080/actuator/health |
-| Redis        | localhost:6379                      |
-| MySQL        | localhost:3306                      |
+| Redis        | localhost:6379                        |
+| MySQL        | localhost:3306                        |
 
 ---
 

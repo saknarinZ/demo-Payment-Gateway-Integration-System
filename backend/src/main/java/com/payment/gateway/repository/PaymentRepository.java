@@ -123,4 +123,36 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
         @Param("endDate") LocalDateTime endDate,
         Pageable pageable
     );
+    /**
+     * ค้นหา Payment ตามคำค้นหา (Reference ID, Customer Name, Email)
+     * 
+     * @param searchTerm คำค้นหา
+     * @param pageable Pagination
+     * @return Page ของ Payment
+     */
+    @Query("SELECT p FROM Payment p WHERE " +
+           "LOWER(p.referenceId) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+           "LOWER(p.customerName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+           "LOWER(p.customerEmail) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+    Page<Payment> findBySearchTerm(@Param("searchTerm") String searchTerm, Pageable pageable);
+
+    /**
+     * ค้นหา Payment ตามสถานะและคำค้นหา
+     * 
+     * @param status สถานะ
+     * @param searchTerm คำค้นหา
+     * @param pageable Pagination
+     * @return Page ของ Payment
+     */
+    @Query("SELECT p FROM Payment p WHERE " +
+           "p.status = :status AND (" +
+           "LOWER(p.referenceId) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+           "LOWER(p.customerName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+           "LOWER(p.customerEmail) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
+    Page<Payment> findByStatusAndSearchTerm(
+        @Param("status") PaymentStatus status,
+        @Param("searchTerm") String searchTerm,
+        Pageable pageable
+    );
+
 }
