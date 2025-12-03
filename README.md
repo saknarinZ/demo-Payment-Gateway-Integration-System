@@ -1,18 +1,38 @@
-# Payment Gateway Integration System
+# 💳 Payment Gateway Integration System
+
+> ระบบเชื่อมต่อ Payment Gateway สร้างด้วย Technology Stack ล่าสุดของปี 2025
+
+![Java](https://img.shields.io/badge/Java-21_LTS-orange?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4-green?logo=springboot)
+![Angular](https://img.shields.io/badge/Angular-19-red?logo=angular)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?logo=mysql)
+![Docker](https://img.shields.io/badge/Docker-Compose-blue?logo=docker)
+
+---
 
 ## 📋 ภาพรวมโปรเจค (Project Overview)
 
-ระบบเชื่อมต่อ Payment Gateway สร้างด้วย Technology Stack ล่าสุดของปี 2025
+ระบบ Payment Gateway แบบครบวงจร พร้อม Demo Shop สำหรับทดสอบการชำระเงิน
+
+### ✨ Features
+
+- 🛒 **Demo Shop** - ร้านอาหาร "ครัวคุณแม่" สำหรับทดสอบ
+- 💳 **Payment Management** - สร้าง/จัดการ Payment
+- 🔐 **Webhook Security** - HMAC-SHA256 Signature Verification
+- 📱 **Responsive Design** - รองรับทุกขนาดหน้าจอ
+- ⚡ **Modern Stack** - Java 21 Virtual Threads + Angular Signals
 
 ### Tech Stack
 
-| Layer     | Technology              | Version |
-| --------- | ----------------------- | ------- |
-| Backend   | Java LTS                | 21      |
-| Backend   | Spring Boot             | 3.4+    |
-| Frontend  | Angular                 | 19+     |
-| Database  | MySQL                   | 8.0     |
-| Container | Docker & Docker Compose | Latest  |
+| Layer      | Technology              | Version |
+| ---------- | ----------------------- | ------- |
+| Backend    | Java LTS                | 21      |
+| Backend    | Spring Boot             | 3.4+    |
+| Frontend   | Angular (Signals)       | 19+     |
+| Styling    | TailwindCSS             | 4.0     |
+| Database   | MySQL                   | 8.0     |
+| Cache      | Redis                   | 7       |
+| Container  | Docker & Docker Compose | Latest  |
 
 ### สถาปัตยกรรม (Architecture)
 
@@ -46,9 +66,14 @@
    ```
 
 3. **เข้าใช้งาน Application**
-   - Frontend: http://localhost
-   - Backend API: http://localhost:8080/api/v1
-   - Health Check: http://localhost:8080/actuator/health
+
+   | Service       | URL                                   |
+   | ------------- | ------------------------------------- |
+   | 🏠 Frontend   | http://localhost                      |
+   | 🍜 Demo Shop  | http://localhost/shop                 |
+   | 🔌 Backend API| http://localhost:8080/api/v1          |
+   | 📚 Swagger UI | http://localhost:8080/swagger-ui.html |
+   | ❤️ Health     | http://localhost:8080/actuator/health |
 
 ### หยุดการทำงาน
 
@@ -112,11 +137,51 @@ Payment Gateway Integration System/
 
 ## 📝 API Endpoints
 
+### Payments
+
+| Method | Endpoint                       | Description          |
+| ------ | ------------------------------ | -------------------- |
+| GET    | `/api/v1/payments`             | รายการ payments      |
+| GET    | `/api/v1/payments/{id}`        | ดู payment ตาม ID    |
+| POST   | `/api/v1/payments`             | สร้าง payment ใหม่   |
+| PUT    | `/api/v1/payments/{id}`        | อัพเดท payment       |
+| DELETE | `/api/v1/payments/{id}`        | ลบ payment           |
+| POST   | `/api/v1/payments/{id}/refund` | ขอ refund            |
+
+### Merchants
+
+| Method | Endpoint                 | Description         |
+| ------ | ------------------------ | ------------------- |
+| GET    | `/api/v1/merchants`      | รายการร้านค้า       |
+| GET    | `/api/v1/merchants/{id}` | ดูร้านค้าตาม ID     |
+| POST   | `/api/v1/merchants`      | สร้างร้านค้าใหม่    |
+
+### Webhooks
+
+| Method | Endpoint                   | Description          |
+| ------ | -------------------------- | -------------------- |
+| POST   | `/api/v1/webhooks/payment` | รับ webhook          |
+
+### System
+
 | Method | Endpoint           | Description     |
 | ------ | ------------------ | --------------- |
 | GET    | `/api/v1/health`   | Health Check    |
 | GET    | `/api/v1/info`     | API Information |
 | GET    | `/actuator/health` | Actuator Health |
+
+---
+
+## 📸 Screenshots
+
+### Demo Shop (ครัวคุณแม่)
+หน้าร้านอาหารสำหรับทดสอบ Payment Flow
+
+### Dashboard
+หน้า Dashboard แสดงสถิติ Payment
+
+### Payment Management  
+จัดการ Payment พร้อม Payment Link
 
 ---
 
@@ -139,8 +204,14 @@ npm start
 
 ---
 
+## 👨‍💻 Author
+
+**Saknarin (Fang)**
+
+- GitHub: [@saknarinZ](https://github.com/saknarinZ)
+
+---
+
 ## 📄 License
 
 MIT License - © 2025 Payment Gateway Team
-
-<!-- Generating images for Fried Chicken, Chicken Rice, and Thai Tea -->
