@@ -41,6 +41,7 @@ export type TransactionStatus = "PENDING" | "SUCCESS" | "FAILED";
  */
 export interface CreatePaymentRequest {
   merchantId: number;
+  orderId: string;
   amount: number;
   currency?: string;
   paymentMethod?: PaymentMethod;

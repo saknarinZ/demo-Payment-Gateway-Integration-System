@@ -34,7 +34,7 @@ import { PaymentResponse, PaymentStatus } from "@core/models/payment.model";
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: "./payment-list.component.html",
-  styleUrls: ["./payment-list.component.css"],
+  styleUrls: ["./payment-list.component.scss"],
 })
 export class PaymentListComponent implements OnInit {
   // Inject Services

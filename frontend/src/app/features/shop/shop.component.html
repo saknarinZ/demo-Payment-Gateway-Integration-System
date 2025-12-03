@@ -1,0 +1,109 @@
+<!-- 
+  Shop Component - Smart Container
+  ใช้ Child Components แทน inline HTML
+  ตามหลัก Component-Based Architecture
+-->
+<div class="min-h-screen bg-gradient-to-br from-blue-600 to-cyan-600">
+  <!-- Header Component -->
+  <app-shop-header
+    [cartItemCount]="cartItemCount()"
+    [cartTotal]="cartTotal()"
+    [showMobileCart]="showMobileCart()"
+    (cartClick)="onCartToggle()"
+  />
+
+  <!-- Main Content -->
+  <main
+    class="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-4 md:gap-6 p-3 sm:p-4 md:p-6 lg:p-8 max-w-7xl mx-auto pb-20 md:pb-8"
+  >
+    <!-- Menu Grid -->
+    <section>
+      <h2 class="text-white text-lg sm:text-xl font-bold mb-3 sm:mb-4">
+        🍽️ เมนูแนะนำวันนี้
+      </h2>
+      <div
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3"
+      >
+        @for (item of menuItems(); track item.id) {
+        <app-menu-item [item]="item" (addToCart)="onAddToCart($event)" />
+        }
+      </div>
+    </section>
+
+    <!-- Cart Sidebar - Desktop Only -->
+    @if (cart().length > 0) {
+    <aside class="hidden lg:block">
+      <app-cart-sidebar
+        [items]="cart()"
+        [total]="cartTotal()"
+        (quantityChange)="onQuantityChange($event)"
+        (removeItem)="onRemoveItem($event)"
+        (checkout)="onCheckout()"
+      />
+    </aside>
+    }
+  </main>
+
+  <!-- Mobile Floating Cart Button (when cart has items) -->
+  @if (cart().length > 0) {
+  <div class="md:hidden fixed bottom-20 left-4 right-4 z-30">
+    <button
+      class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-2xl font-semibold shadow-lg shadow-blue-500/30 flex items-center justify-center gap-3 active:scale-[0.98] transition-transform"
+      (click)="onCartToggle()"
+    >
+      <span class="text-lg">🧺</span>
+      <span>ดูตะกร้า</span>
+      <span class="bg-white/20 px-2.5 py-0.5 rounded-full text-sm">
+        {{ cartItemCount() }} รายการ • {{ formatPrice(cartTotal()) }}
+      </span>
+    </button>
+  </div>
+  }
+
+  <!-- Mobile Cart Modal (Full Screen Overlay) -->
+  @if (showMobileCart() && cart().length > 0) {
+  <div class="md:hidden fixed inset-0 z-50 flex flex-col bg-white">
+    <!-- Modal Header -->
+    <div
+      class="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white"
+    >
+      <h2 class="text-lg font-bold text-gray-800">🧺 ตะกร้าของคุณ</h2>
+      <button
+        class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 active:bg-gray-300 transition-colors"
+        (click)="closeMobileCart()"
+      >
+        ✕
+      </button>
+    </div>
+
+    <!-- Cart Content -->
+    <div class="flex-1 overflow-y-auto bg-gray-50 p-4">
+      <app-cart-sidebar
+        [items]="cart()"
+        [total]="cartTotal()"
+        [isMobile]="true"
+        (quantityChange)="onQuantityChange($event)"
+        (removeItem)="onRemoveItem($event)"
+        (checkout)="onMobileCheckout()"
+      />
+    </div>
+  </div>
+  }
+
+  <!-- Checkout Modal Component -->
+  @if (showCheckoutForm()) {
+  <app-checkout-modal
+    [items]="cart()"
+    [total]="cartTotal()"
+    [customerName]="customerName()"
+    [customerPhone]="customerPhone()"
+    [tableNumber]="tableNumber()"
+    [isFormValid]="isFormValid()"
+    [processing]="processing()"
+    [error]="error()"
+    (close)="onModalClose()"
+    (formChange)="onFormChange($event)"
+    (submit)="onFormSubmit()"
+  />
+  }
+</div>

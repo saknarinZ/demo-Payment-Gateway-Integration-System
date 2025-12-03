@@ -36,7 +36,7 @@ import {
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule, ReactiveFormsModule],
   templateUrl: "./payment-form.component.html",
-  styleUrls: ["./payment-form.component.css"],
+  styleUrls: ["./payment-form.component.scss"],
 })
 export class PaymentFormComponent {
   // Inject Services
@@ -65,8 +65,15 @@ export class PaymentFormComponent {
   protected paymentForm: FormGroup;
 
   constructor() {
+    // Generate unique Order ID
+    const generatedOrderId = this.generateOrderId();
+
     // Initialize Form
     this.paymentForm = this.fb.group({
+      orderId: [
+        generatedOrderId,
+        [Validators.required, Validators.minLength(1)],
+      ],
       customerName: ["", [Validators.required, Validators.minLength(2)]],
       customerEmail: ["", [Validators.required, Validators.email]],
       amount: [null, [Validators.required, Validators.min(1)]],
@@ -75,6 +82,15 @@ export class PaymentFormComponent {
       description: [""],
       callbackUrl: ["", Validators.pattern(/^(https?:\/\/).*/)],
     });
+  }
+
+  /**
+   * Generate unique Order ID
+   */
+  private generateOrderId(): string {
+    const timestamp = Date.now().toString(36).toUpperCase();
+    const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return `ORD-${timestamp}-${random}`;
   }
 
   /**
@@ -96,6 +112,7 @@ export class PaymentFormComponent {
     const formValue = this.paymentForm.value;
     const request: CreatePaymentRequest = {
       merchantId: 1, // TODO: ใช้ Merchant จริงจาก Authentication
+      orderId: formValue.orderId,
       amount: formValue.amount,
       currency: formValue.currency,
       customerName: formValue.customerName,

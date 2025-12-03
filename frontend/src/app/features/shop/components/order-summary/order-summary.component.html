@@ -1,0 +1,30 @@
+<!-- Order Summary - Presentational Component -->
+<div class="bg-gray-50 rounded-lg sm:rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
+  <h3 class="text-xs sm:text-sm text-gray-500 font-medium mb-2 sm:mb-3">
+    🧾 สรุปรายการ
+  </h3>
+
+  <!-- Items List -->
+  <div class="max-h-32 sm:max-h-40 overflow-y-auto">
+    @for (cartItem of items(); track cartItem.item.id) {
+    <div
+      class="flex justify-between py-1.5 sm:py-2 text-xs sm:text-sm border-b border-gray-200 gap-2"
+    >
+      <span class="truncate flex-1">
+        {{ cartItem.item.name }} x{{ cartItem.quantity }}
+      </span>
+      <span class="flex-shrink-0 font-medium">
+        {{ formatPrice(cartItem.item.price * cartItem.quantity) }}
+      </span>
+    </div>
+    }
+  </div>
+
+  <!-- Total -->
+  <div
+    class="flex justify-between pt-2 sm:pt-3 mt-1 sm:mt-2 text-base sm:text-lg text-blue-600 font-bold"
+  >
+    <span>ยอดรวม</span>
+    <span>{{ formatPrice(total()) }}</span>
+  </div>
+</div>

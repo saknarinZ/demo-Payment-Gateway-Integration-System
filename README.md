@@ -142,3 +142,5 @@ npm start
 ## 📄 License
 
 MIT License - © 2025 Payment Gateway Team
+
+<!-- Generating images for Fried Chicken, Chicken Rice, and Thai Tea -->

@@ -1,37 +1,79 @@
-<div class="payment-form-container">
+<div class="max-w-3xl mx-auto">
   <!-- Back Button -->
-  <div class="back-nav">
-    <a routerLink="/payments" class="back-link">← กลับไปยังรายการ Payment</a>
+  <div class="mb-4">
+    <a
+      routerLink="/payments"
+      class="text-blue-600 hover:text-blue-700 font-medium"
+      >← กลับไปยังรายการ Payment</a
+    >
   </div>
 
   <!-- Form Card -->
-  <div class="form-card">
-    <div class="card-header">
-      <h1>สร้าง Payment ใหม่</h1>
-      <p>กรอกข้อมูลเพื่อสร้าง Payment</p>
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+    <div class="px-6 py-5 border-b border-gray-100">
+      <h1 class="text-xl font-bold text-gray-900">สร้าง Payment ใหม่</h1>
+      <p class="text-gray-500 text-sm mt-1">กรอกข้อมูลเพื่อสร้าง Payment</p>
     </div>
 
     <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
-      <div class="card-body">
+      <div class="p-6 space-y-8">
         <!-- Customer Information Section -->
-        <section class="form-section">
-          <h2 class="section-title">ข้อมูลลูกค้า</h2>
+        <section>
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">
+            ข้อมูลคำสั่งซื้อ
+          </h2>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="customerName"
-                >ชื่อลูกค้า <span class="required">*</span></label
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label
+                for="orderId"
+                class="block text-sm font-medium text-gray-700"
+                >Order ID <span class="text-red-500">*</span></label
+              >
+              <input
+                type="text"
+                id="orderId"
+                class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                [class]="
+                  isFieldInvalid('orderId')
+                    ? 'border-red-500'
+                    : 'border-gray-300'
+                "
+                formControlName="orderId"
+                placeholder="ORD-001"
+              />
+              @if (isFieldInvalid('orderId')) {
+              <span class="text-sm text-red-500">กรุณากรอก Order ID</span>
+              }
+            </div>
+          </div>
+        </section>
+
+        <!-- Customer Information Section -->
+        <section>
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">ข้อมูลลูกค้า</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label
+                for="customerName"
+                class="block text-sm font-medium text-gray-700"
+                >ชื่อลูกค้า <span class="text-red-500">*</span></label
               >
               <input
                 type="text"
                 id="customerName"
-                class="form-input"
+                class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                [class]="
+                  isFieldInvalid('customerName')
+                    ? 'border-red-500'
+                    : 'border-gray-300'
+                "
                 formControlName="customerName"
                 placeholder="กรอกชื่อลูกค้า"
-                [class.error]="isFieldInvalid('customerName')"
               />
               @if (isFieldInvalid('customerName')) {
-              <span class="error-message">
+              <span class="text-sm text-red-500">
                 @if (paymentForm.get('customerName')?.errors?.['required']) {
                 กรุณากรอกชื่อลูกค้า } @if
                 (paymentForm.get('customerName')?.errors?.['minlength']) {
@@ -40,20 +82,26 @@
               }
             </div>
 
-            <div class="form-group">
-              <label for="customerEmail"
-                >อีเมล <span class="required">*</span></label
+            <div class="space-y-1">
+              <label
+                for="customerEmail"
+                class="block text-sm font-medium text-gray-700"
+                >อีเมล <span class="text-red-500">*</span></label
               >
               <input
                 type="email"
                 id="customerEmail"
-                class="form-input"
+                class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                [class]="
+                  isFieldInvalid('customerEmail')
+                    ? 'border-red-500'
+                    : 'border-gray-300'
+                "
                 formControlName="customerEmail"
                 placeholder="email@example.com"
-                [class.error]="isFieldInvalid('customerEmail')"
               />
               @if (isFieldInvalid('customerEmail')) {
-              <span class="error-message">
+              <span class="text-sm text-red-500">
                 @if (paymentForm.get('customerEmail')?.errors?.['required']) {
                 กรุณากรอกอีเมล } @if
                 (paymentForm.get('customerEmail')?.errors?.['email']) {
@@ -65,33 +113,44 @@
         </section>
 
         <!-- Payment Information Section -->
-        <section class="form-section">
-          <h2 class="section-title">ข้อมูลการชำระเงิน</h2>
+        <section>
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">
+            ข้อมูลการชำระเงิน
+          </h2>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="amount"
-                >จำนวนเงิน <span class="required">*</span></label
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label
+                for="amount"
+                class="block text-sm font-medium text-gray-700"
+                >จำนวนเงิน <span class="text-red-500">*</span></label
               >
-              <div class="input-with-prefix">
+              <div class="flex">
                 <input
                   type="number"
                   id="amount"
-                  class="form-input"
+                  class="flex-1 px-4 py-2.5 border rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  [class]="
+                    isFieldInvalid('amount')
+                      ? 'border-red-500'
+                      : 'border-gray-300'
+                  "
                   formControlName="amount"
                   placeholder="0.00"
                   step="0.01"
                   min="1"
-                  [class.error]="isFieldInvalid('amount')"
                 />
-                <select formControlName="currency" class="currency-select">
+                <select
+                  formControlName="currency"
+                  class="px-3 py-2.5 border border-l-0 border-gray-300 rounded-r-lg bg-gray-50 text-gray-700 focus:ring-2 focus:ring-blue-500"
+                >
                   <option value="THB">THB</option>
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
                 </select>
               </div>
               @if (isFieldInvalid('amount')) {
-              <span class="error-message">
+              <span class="text-sm text-red-500">
                 @if (paymentForm.get('amount')?.errors?.['required']) {
                 กรุณากรอกจำนวนเงิน } @if
                 (paymentForm.get('amount')?.errors?.['min']) {
@@ -100,75 +159,100 @@
               }
             </div>
 
-            <div class="form-group">
-              <label>วิธีชำระเงิน <span class="required">*</span></label>
-              <div class="payment-methods">
+            <div class="space-y-1">
+              <label class="block text-sm font-medium text-gray-700"
+                >วิธีชำระเงิน <span class="text-red-500">*</span></label
+              >
+              <div class="grid grid-cols-2 gap-2">
                 @for (method of paymentMethods; track method.value) {
                 <label
-                  class="method-option"
-                  [class.selected]="
+                  class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer transition-all"
+                  [class]="
                     paymentForm.get('paymentMethod')?.value === method.value
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-300 hover:border-gray-400'
                   "
                 >
                   <input
                     type="radio"
                     formControlName="paymentMethod"
                     [value]="method.value"
+                    class="sr-only"
                   />
-                  <span class="method-icon">{{ method.icon }}</span>
-                  <span class="method-label">{{ method.label }}</span>
+                  <span class="text-xl">{{ method.icon }}</span>
+                  <span class="text-sm font-medium text-gray-700">{{
+                    method.label
+                  }}</span>
                 </label>
                 }
               </div>
               @if (isFieldInvalid('paymentMethod')) {
-              <span class="error-message">กรุณาเลือกวิธีชำระเงิน</span>
+              <span class="text-sm text-red-500">กรุณาเลือกวิธีชำระเงิน</span>
               }
             </div>
           </div>
         </section>
 
         <!-- Additional Information Section -->
-        <section class="form-section">
-          <h2 class="section-title">ข้อมูลเพิ่มเติม</h2>
+        <section>
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">
+            ข้อมูลเพิ่มเติม
+          </h2>
 
-          <div class="form-group full-width">
-            <label for="description">รายละเอียด (ไม่บังคับ)</label>
-            <textarea
-              id="description"
-              class="form-input"
-              formControlName="description"
-              placeholder="ระบุรายละเอียดเพิ่มเติม..."
-              rows="3"
-            ></textarea>
-          </div>
+          <div class="space-y-4">
+            <div class="space-y-1">
+              <label
+                for="description"
+                class="block text-sm font-medium text-gray-700"
+                >รายละเอียด (ไม่บังคับ)</label
+              >
+              <textarea
+                id="description"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                formControlName="description"
+                placeholder="ระบุรายละเอียดเพิ่มเติม..."
+                rows="3"
+              ></textarea>
+            </div>
 
-          <div class="form-group full-width">
-            <label for="callbackUrl">Callback URL (ไม่บังคับ)</label>
-            <input
-              type="url"
-              id="callbackUrl"
-              class="form-input"
-              formControlName="callbackUrl"
-              placeholder="https://your-website.com/callback"
-              [class.error]="isFieldInvalid('callbackUrl')"
-            />
-            @if (isFieldInvalid('callbackUrl')) {
-            <span class="error-message">รูปแบบ URL ไม่ถูกต้อง</span>
-            }
-            <small class="field-hint">
-              URL ที่จะได้รับแจ้งเตือนเมื่อสถานะ Payment เปลี่ยนแปลง
-            </small>
+            <div class="space-y-1">
+              <label
+                for="callbackUrl"
+                class="block text-sm font-medium text-gray-700"
+                >Callback URL (ไม่บังคับ)</label
+              >
+              <input
+                type="url"
+                id="callbackUrl"
+                class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                [class]="
+                  isFieldInvalid('callbackUrl')
+                    ? 'border-red-500'
+                    : 'border-gray-300'
+                "
+                formControlName="callbackUrl"
+                placeholder="https://your-website.com/callback"
+              />
+              @if (isFieldInvalid('callbackUrl')) {
+              <span class="text-sm text-red-500">รูปแบบ URL ไม่ถูกต้อง</span>
+              }
+              <small class="text-xs text-gray-500">
+                URL ที่จะได้รับแจ้งเตือนเมื่อสถานะ Payment เปลี่ยนแปลง
+              </small>
+            </div>
           </div>
         </section>
       </div>
 
       <!-- Form Actions -->
-      <div class="card-footer">
-        <div class="form-summary">
+      <div
+        class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex items-center justify-between rounded-b-xl"
+      >
+        <div>
           @if (paymentForm.get('amount')?.value &&
           paymentForm.get('currency')?.value) {
-          <span class="summary-label">ยอดรวม:</span>
-          <span class="summary-amount">
+          <span class="text-sm text-gray-600">ยอดรวม:</span>
+          <span class="text-lg font-bold text-blue-600 ml-2">
             {{
               formatAmount(
                 paymentForm.get("amount")?.value,
@@ -179,15 +263,21 @@
           }
         </div>
 
-        <div class="form-actions">
-          <a routerLink="/payments" class="btn btn-secondary">ยกเลิก</a>
+        <div class="flex gap-3">
+          <a
+            routerLink="/payments"
+            class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+            >ยกเลิก</a
+          >
           <button
             type="submit"
-            class="btn btn-primary"
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             [disabled]="!paymentForm.valid || submitting()"
           >
             @if (submitting()) {
-            <span class="btn-loading"></span>
+            <span
+              class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+            ></span>
             กำลังสร้าง... } @else { สร้าง Payment }
           </button>
         </div>
@@ -197,9 +287,13 @@
 
   <!-- Error Message -->
   @if (error()) {
-  <div class="error-banner">
+  <div
+    class="mt-4 flex items-center justify-between p-4 bg-red-50 border border-red-200 rounded-lg text-red-700"
+  >
     <p>❌ {{ error() }}</p>
-    <button class="btn-close" (click)="error.set(null)">✕</button>
+    <button class="text-red-500 hover:text-red-700" (click)="error.set(null)">
+      ✕
+    </button>
   </div>
   }
 </div>

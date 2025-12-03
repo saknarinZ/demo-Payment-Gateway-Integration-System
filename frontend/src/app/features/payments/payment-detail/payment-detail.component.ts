@@ -39,7 +39,7 @@ import {
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: "./payment-detail.component.html",
-  styleUrls: ["./payment-detail.component.css"],
+  styleUrls: ["./payment-detail.component.scss"],
 })
 export class PaymentDetailComponent implements OnInit {
   // Inject Services
@@ -57,6 +57,14 @@ export class PaymentDetailComponent implements OnInit {
   protected readonly showRefundForm = signal(false);
   protected readonly refundAmount = signal(0);
   protected readonly refundReason = signal("");
+  protected readonly linkCopied = signal(false);
+
+  // Computed: Payment Link
+  protected readonly paymentLink = computed(() => {
+    const payment = this.payment();
+    if (!payment) return "";
+    return `${window.location.origin}/checkout/${payment.referenceId}`;
+  });
 
   // Computed: Validate Refund Form
   protected readonly isRefundValid = computed(() => {
@@ -189,6 +197,24 @@ export class PaymentDetailComponent implements OnInit {
   protected onRefundReasonChange(event: Event): void {
     const textarea = event.target as HTMLTextAreaElement;
     this.refundReason.set(textarea.value);
+  }
+
+  /**
+   * คัดลอก Payment Link
+   */
+  protected copyPaymentLink(): void {
+    const link = this.paymentLink();
+    navigator.clipboard.writeText(link).then(() => {
+      this.linkCopied.set(true);
+      setTimeout(() => this.linkCopied.set(false), 2000);
+    });
+  }
+
+  /**
+   * เปิดหน้า Checkout
+   */
+  protected openCheckout(): void {
+    window.open(this.paymentLink(), "_blank");
   }
 
   /**

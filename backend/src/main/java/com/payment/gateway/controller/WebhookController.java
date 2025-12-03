@@ -1,15 +1,22 @@
 package com.payment.gateway.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.payment.gateway.dto.WebhookPayload;
 import com.payment.gateway.security.HmacSignatureService;
 import com.payment.gateway.service.PaymentService;
-import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * WebhookController - REST Controller สำหรับรับ Webhook จาก Payment Gateway
@@ -28,10 +35,18 @@ public class WebhookController {
     
     private final PaymentService paymentService;
     private final HmacSignatureService hmacSignatureService;
+    private final ObjectMapper objectMapper;
+    private final Validator validator;
 
-    public WebhookController(PaymentService paymentService, HmacSignatureService hmacSignatureService) {
+    public WebhookController(
+            PaymentService paymentService, 
+            HmacSignatureService hmacSignatureService,
+            ObjectMapper objectMapper,
+            Validator validator) {
         this.paymentService = paymentService;
         this.hmacSignatureService = hmacSignatureService;
+        this.objectMapper = objectMapper;
+        this.validator = validator;
     }
 
     /**
@@ -40,16 +55,31 @@ public class WebhookController {
      * Header ที่ต้องมี:
      * - X-Webhook-Signature: sha256=<signature>
      * 
-     * @param payload WebhookPayload
+     * วิธีแก้ปัญหา @RequestBody 2 ตัว:
+     * - อ่าน raw body จาก HttpServletRequest
+     * - แปลงเป็น Object ด้วย ObjectMapper
+     * - Validate ด้วย Validator
+     * 
+     * @param request HttpServletRequest
      * @param signature Signature จาก Header
-     * @param rawBody Raw Request Body สำหรับตรวจสอบ Signature
      * @return Response
      */
     @PostMapping("/payment")
     public ResponseEntity<Map<String, Object>> handlePaymentWebhook(
-            @Valid @RequestBody WebhookPayload payload,
-            @RequestHeader(value = "X-Webhook-Signature", required = false) String signature,
-            @RequestBody String rawBody) {
+            HttpServletRequest request,
+            @RequestHeader(value = "X-Webhook-Signature", required = false) String signature) throws IOException {
+        
+        // 1. อ่าน raw body (สำหรับตรวจ signature)
+        String rawBody = new String(request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        
+        // 2. แปลง JSON เป็น Object
+        WebhookPayload payload = objectMapper.readValue(rawBody, WebhookPayload.class);
+        
+        // 3. Validate payload
+        Set<ConstraintViolation<WebhookPayload>> violations = validator.validate(payload);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
         
         logger.info("Received webhook: eventType={}, referenceId={}", 
             payload.eventType(), payload.referenceId());

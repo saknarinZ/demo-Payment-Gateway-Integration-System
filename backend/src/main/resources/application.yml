@@ -21,9 +21,9 @@ spring:
   # ==========================================================================
   datasource:
     # URL จะถูก Override โดย Environment Variable ใน Docker
-    url: jdbc:mysql://localhost:3306/payment_gateway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Bangkok
-    username: payment_user
-    password: payment_secret
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/payment_gateway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Bangkok}
+    username: ${SPRING_DATASOURCE_USERNAME:payment_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:payment_password}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
     # HikariCP Connection Pool Settings
@@ -78,12 +78,12 @@ spring:
   # Cache Configuration
   # ==========================================================================
   cache:
-    type: redis
+    type: none # redis
     redis:
       # TTL สำหรับ Cache (10 นาที)
       time-to-live: 600000
       # ใช้ Key Prefix
-      key-prefix: payment-gateway::
+      key-prefix: "payment-gateway::"
       use-key-prefix: true
       # Cache Null Values
       cache-null-values: false

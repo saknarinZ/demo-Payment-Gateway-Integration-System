@@ -28,6 +28,11 @@ public enum PaymentMethod {
     PROMPTPAY,
     
     /**
+     * QR Code (Generic)
+     */
+    QR_CODE,
+    
+    /**
      * Mobile Banking
      */
     MOBILE_BANKING,

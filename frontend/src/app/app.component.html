@@ -1,51 +1,179 @@
-<div class="app-layout">
+<div class="flex flex-col min-h-screen">
   <!-- Header / Navigation -->
-  <header class="app-header">
-    <div class="header-content">
+  <header
+    class="bg-gray-900 border-b border-gray-800 sticky top-0 z-50 shadow-md"
+  >
+    <div
+      class="flex items-center justify-between px-4 md:px-6 py-3 md:py-4 max-w-7xl mx-auto w-full"
+    >
       <!-- Logo -->
-      <div class="logo">
-        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="flex items-center gap-2">
+        <svg
+          class="w-8 h-8 md:w-9 md:h-9 text-blue-500"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <rect x="2" y="5" width="20" height="14" rx="2" />
           <line x1="2" y1="10" x2="22" y2="10" />
         </svg>
-        <span class="logo-text">Payment Gateway</span>
+        <span class="text-lg md:text-2xl font-bold text-white"
+          >Payment<span class="hidden md:inline"> Gateway</span></span
+        >
       </div>
 
-      <!-- Navigation -->
-      <nav class="nav-menu">
-        <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex gap-3">
+        <a
+          routerLink="/dashboard"
+          routerLinkActive="bg-gray-800 text-white shadow-sm"
+          class="px-5 py-2.5 font-medium text-gray-300 rounded-xl transition-all hover:text-white hover:bg-gray-800 text-lg"
+        >
           Dashboard
         </a>
-        <a routerLink="/payments" routerLinkActive="active" class="nav-link">
+        <a
+          routerLink="/payments"
+          routerLinkActive="bg-gray-800 text-white shadow-sm"
+          class="px-5 py-2.5 font-medium text-gray-300 rounded-xl transition-all hover:text-white hover:bg-gray-800 text-lg"
+        >
           Payments
         </a>
-        <a routerLink="/create-payment" routerLinkActive="active" class="nav-link btn-create">
+        <a
+          routerLink="/create-payment"
+          routerLinkActive="bg-blue-600"
+          class="px-5 py-2.5 font-medium text-white bg-blue-600 rounded-xl transition-all hover:bg-blue-500 shadow-lg shadow-blue-900/20 text-lg"
+        >
           + สร้าง Payment
+        </a>
+        <a
+          routerLink="/shop"
+          routerLinkActive="opacity-90"
+          class="px-5 py-2.5 font-medium text-white bg-gradient-to-r from-blue-600 to-cyan-500 rounded-xl transition-all hover:from-blue-500 hover:to-cyan-400 shadow-lg shadow-cyan-900/20 text-lg"
+        >
+          🍜 ร้านอาหาร Demo
         </a>
       </nav>
 
-      <!-- User Info / Actions -->
-      <div class="header-actions">
-        <span class="status-badge">
+      <!-- User Info / Actions (Desktop) -->
+      <div class="hidden md:flex items-center gap-4">
+        <span class="flex items-center gap-2 text-sm text-gray-300">
           @if (apiService.isConnected()) {
-            <span class="status-dot connected"></span>
-            เชื่อมต่อแล้ว
-          } @else {
-            <span class="status-dot disconnected"></span>
-            ไม่ได้เชื่อมต่อ
-          }
+          <span
+            class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_0_2px_rgba(34,197,94,0.2)]"
+          ></span>
+          เชื่อมต่อแล้ว } @else {
+          <span
+            class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_0_2px_rgba(239,68,68,0.2)]"
+          ></span>
+          ไม่ได้เชื่อมต่อ }
         </span>
+      </div>
+
+      <!-- Mobile: Connection Status Only -->
+      <div class="md:hidden flex items-center">
+        @if (apiService.isConnected()) {
+        <span
+          class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"
+        ></span>
+        } @else {
+        <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+        }
       </div>
     </div>
   </header>
 
+  <!-- Mobile Bottom Navigation -->
+  <nav
+    class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-gray-900 border-t border-gray-800 safe-area-bottom"
+  >
+    <div class="flex justify-around items-center h-16">
+      <!-- Dashboard -->
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="text-blue-400"
+        class="flex flex-col items-center justify-center flex-1 h-full text-gray-400 hover:text-gray-200 transition-colors"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <svg
+          class="w-6 h-6 mb-0.5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+          />
+        </svg>
+        <span class="text-[10px] font-medium">Dashboard</span>
+      </a>
+
+      <!-- Payments -->
+      <a
+        routerLink="/payments"
+        routerLinkActive="text-blue-400"
+        class="flex flex-col items-center justify-center flex-1 h-full text-gray-400 hover:text-gray-200 transition-colors"
+      >
+        <svg
+          class="w-6 h-6 mb-0.5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+          />
+        </svg>
+        <span class="text-[10px] font-medium">Payments</span>
+      </a>
+
+      <!-- Create Payment (Center - Prominent) -->
+      <a
+        routerLink="/create-payment"
+        routerLinkActive="scale-110"
+        class="flex flex-col items-center justify-center flex-1 h-full relative"
+      >
+        <div
+          class="absolute -top-4 w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-600/30"
+        >
+          <svg
+            class="w-7 h-7 text-white"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M12 4v16m8-8H4" />
+          </svg>
+        </div>
+        <span class="text-[10px] font-medium text-gray-400 mt-6">สร้าง</span>
+      </a>
+
+      <!-- Shop Demo -->
+      <a
+        routerLink="/shop"
+        routerLinkActive="text-cyan-400"
+        class="flex flex-col items-center justify-center flex-1 h-full text-gray-400 hover:text-gray-200 transition-colors"
+      >
+        <span class="text-xl mb-0.5">🍜</span>
+        <span class="text-[10px] font-medium">ร้านอาหาร</span>
+      </a>
+    </div>
+  </nav>
+
   <!-- Main Content -->
-  <main class="app-main">
+  <main class="flex-1 p-4 md:p-6 pb-20 md:pb-6 max-w-7xl mx-auto w-full">
     <router-outlet />
   </main>
 
-  <!-- Footer -->
-  <footer class="app-footer">
-    <p>© 2025 Payment Gateway Integration System | Version {{ version() }}</p>
+  <!-- Footer (Desktop Only) -->
+  <footer
+    class="hidden md:block bg-white border-t border-gray-200 py-4 px-6 text-center"
+  >
+    <p class="text-sm text-gray-500">
+      © 2025 Payment Gateway Integration System | Version {{ version() }}
+    </p>
   </footer>
 </div>

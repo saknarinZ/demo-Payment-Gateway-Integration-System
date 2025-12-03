@@ -67,6 +67,12 @@ public class Merchant {
     private String webhookUrl;
 
     /**
+     * Webhook Secret สำหรับ HMAC Signature
+     */
+    @Column(name = "webhook_secret", nullable = false, length = 64)
+    private String webhookSecret;
+
+    /**
      * สถานะการใช้งาน
      */
     @Column(name = "is_active", nullable = false)

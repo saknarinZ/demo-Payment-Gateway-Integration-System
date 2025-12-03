@@ -7,10 +7,7 @@
  * - Router
  */
 
-import {
-  ApplicationConfig,
-  provideZonelessChangeDetection,
-} from "@angular/core";
+import { ApplicationConfig, provideZoneChangeDetection } from "@angular/core";
 import { provideRouter, withComponentInputBinding } from "@angular/router";
 import {
   provideHttpClient,
@@ -19,18 +16,18 @@ import {
 } from "@angular/common/http";
 
 import { routes } from "./app.routes";
+import { PaymentService } from "@core/services/payment.service";
+import { MockPaymentService } from "@core/services/mock-payment.service";
 
 /**
  * Application Configuration Object
  *
- * ใช้ Zoneless Change Detection เพื่อ Performance ที่ดีขึ้น
- * Angular จะใช้ Signals สำหรับ Change Detection แทน Zone.js
+ * ใช้ Zone Change Detection (Standard)
  */
 export const appConfig: ApplicationConfig = {
   providers: [
-    // Zoneless Change Detection - ไม่ใช้ Zone.js
-    // ทำให้ต้องใช้ Signals สำหรับ State Management
-    provideZonelessChangeDetection(),
+    // Zone Change Detection
+    provideZoneChangeDetection({ eventCoalescing: true }),
 
     // Router Configuration
     // withComponentInputBinding() - ส่ง Route Params เป็น Input ได้

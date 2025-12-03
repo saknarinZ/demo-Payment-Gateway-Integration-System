@@ -1,16 +1,15 @@
 package com.payment.gateway.config;
 
-import com.payment.gateway.dto.CreateMerchantRequest;
 import com.payment.gateway.dto.CreatePaymentRequest;
+import com.payment.gateway.entity.Merchant;
 import com.payment.gateway.entity.PaymentMethod;
-import com.payment.gateway.service.MerchantService;
+import com.payment.gateway.repository.MerchantRepository;
 import com.payment.gateway.service.PaymentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 import java.math.BigDecimal;
 
@@ -24,28 +23,44 @@ import java.math.BigDecimal;
 public class DataInitializer {
 
     private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
+    
+    // Demo API Key ที่ Frontend ใช้
+    private static final String DEMO_API_KEY = "pk_live_demo_key_for_testing";
+    private static final String DEMO_API_SECRET = "sk_live_demo_secret_for_testing_1234567890";
+    private static final String DEMO_WEBHOOK_SECRET = "whsec_demo_webhook_secret_for_testing";
 
     /**
      * สร้างข้อมูลเริ่มต้น
      */
     @Bean
-    CommandLineRunner initData(MerchantService merchantService, PaymentService paymentService) {
+    CommandLineRunner initData(MerchantRepository merchantRepository, PaymentService paymentService) {
         return args -> {
             logger.info("Initializing demo data...");
             
             try {
-                // สร้าง Demo Merchant
-                var merchantRequest = new CreateMerchantRequest(
-                    "Demo Shop",
-                    "demo@example.com",
-                    "0812345678",
-                    "https://example.com/webhook"
-                );
-                var merchant = merchantService.createMerchant(merchantRequest);
-                logger.info("Demo merchant created with API Key: {}", merchant.apiKey());
+                // ตรวจสอบว่ามี Demo Merchant แล้วหรือยัง
+                if (merchantRepository.existsByApiKey(DEMO_API_KEY)) {
+                    logger.info("Demo merchant already exists with API Key: {}", DEMO_API_KEY);
+                    return;
+                }
+                
+                // สร้าง Demo Merchant ด้วย API Key ที่กำหนด
+                Merchant merchant = Merchant.builder()
+                    .name("Demo Shop")
+                    .email("demo@example.com")
+                    .phone("0812345678")
+                    .webhookUrl("https://example.com/webhook")
+                    .webhookSecret(DEMO_WEBHOOK_SECRET)
+                    .apiKey(DEMO_API_KEY)
+                    .apiSecret(DEMO_API_SECRET)
+                    .isActive(true)
+                    .build();
+                
+                merchantRepository.save(merchant);
+                logger.info("Demo merchant created with API Key: {}", DEMO_API_KEY);
                 
                 // สร้าง Sample Payments
-                String apiKey = merchant.apiKey();
+                String apiKey = DEMO_API_KEY;
                 
                 // Payment 1 - Pending
                 var payment1 = new CreatePaymentRequest(
@@ -122,8 +137,8 @@ public class DataInitializer {
                 
                 logger.info("Demo data initialized successfully!");
                 logger.info("===================================");
-                logger.info("Demo Merchant API Key: {}", merchant.apiKey());
-                logger.info("Demo Merchant API Secret: {}", merchant.apiSecret());
+                logger.info("Demo Merchant API Key: {}", DEMO_API_KEY);
+                logger.info("Demo Merchant API Secret: {}", DEMO_API_SECRET);
                 logger.info("===================================");
                 
             } catch (Exception e) {

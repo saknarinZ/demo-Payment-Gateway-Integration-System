@@ -55,6 +55,24 @@ export const routes: Routes = [
     title: "Create Payment - Payment Gateway",
   },
 
+  // Checkout Route - หน้าชำระเงินสำหรับลูกค้า
+  {
+    path: "checkout/:referenceId",
+    loadComponent: () =>
+      import("./features/checkout/checkout.component").then(
+        (m) => m.CheckoutComponent
+      ),
+    title: "Checkout - Payment Gateway",
+  },
+
+  // Shop Route - หน้าร้านค้า E-Commerce Demo (แบบ Shopee)
+  {
+    path: "shop",
+    loadComponent: () =>
+      import("./features/shop/shop.component").then((m) => m.ShopComponent),
+    title: "Demo Shop - E-Commerce",
+  },
+
   // Wildcard Route - หน้าที่ไม่พบ
   {
     path: "**",

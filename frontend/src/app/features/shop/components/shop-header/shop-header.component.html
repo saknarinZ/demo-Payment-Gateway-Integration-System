@@ -1,0 +1,131 @@
+<!-- Shop Header - Presentational Component -->
+
+<!-- ========== MOBILE HEADER (Simple & Clean) ========== -->
+<header
+  class="md:hidden bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-30"
+>
+  <div class="flex items-center justify-between px-4 py-3">
+    <!-- Logo -->
+    <div class="flex items-center gap-2">
+      <div
+        class="w-9 h-9 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl flex items-center justify-center shadow-md"
+      >
+        <span class="text-lg">🍜</span>
+      </div>
+      <span class="font-bold text-gray-800">{{ shopName() }}</span>
+    </div>
+
+    <!-- Cart Button -->
+    <button
+      class="relative w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform"
+      (click)="onCartClick()"
+    >
+      <span class="text-lg">🧺</span>
+      @if (cartItemCount() > 0) {
+      <span
+        class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow animate-pulse"
+      >
+        {{ cartItemCount() }}
+      </span>
+      }
+    </button>
+  </div>
+</header>
+
+<!-- ========== MOBILE BOTTOM NAVIGATION ========== -->
+<nav
+  class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 safe-area-bottom"
+>
+  <div class="flex justify-around items-center h-16">
+    <!-- Home -->
+    <a
+      href="#"
+      class="flex flex-col items-center justify-center flex-1 h-full text-gray-400 hover:text-gray-600 transition-colors"
+    >
+      <span class="text-xl mb-0.5">🏠</span>
+      <span class="text-[10px] font-medium">หน้าแรก</span>
+    </a>
+
+    <!-- Menu (Active) -->
+    <a
+      href="#"
+      class="flex flex-col items-center justify-center flex-1 h-full relative"
+    >
+      <div
+        class="absolute -top-3 w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center shadow-lg"
+      >
+        <span class="text-xl">🍽️</span>
+      </div>
+      <span class="text-[10px] font-bold text-blue-600 mt-7">เมนู</span>
+    </a>
+
+    <!-- Orders -->
+    <a
+      href="#"
+      class="flex flex-col items-center justify-center flex-1 h-full text-gray-400 hover:text-gray-600 transition-colors"
+    >
+      <span class="text-xl mb-0.5">📋</span>
+      <span class="text-[10px] font-medium">ออเดอร์</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ========== DESKTOP HEADER (Full Navigation) ========== -->
+<header class="hidden md:block bg-white shadow-md sticky top-0 z-30">
+  <div
+    class="flex items-center justify-between px-6 lg:px-8 py-4 max-w-7xl mx-auto"
+  >
+    <!-- Logo & Shop Name -->
+    <div class="flex items-center gap-3">
+      <div
+        class="w-11 h-11 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl flex items-center justify-center shadow-md"
+      >
+        <span class="text-2xl">🍜</span>
+      </div>
+      <div>
+        <h1 class="text-lg lg:text-xl font-bold text-gray-800">
+          {{ shopName() }}
+        </h1>
+        <p class="text-xs text-gray-500">{{ tagline() }}</p>
+      </div>
+    </div>
+
+    <!-- Desktop Navigation -->
+    <nav class="flex items-center gap-1">
+      <a
+        href="#"
+        class="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-medium transition-colors"
+      >
+        หน้าแรก
+      </a>
+      <a
+        href="#"
+        class="px-4 py-2 rounded-lg bg-blue-50 text-blue-600 font-semibold"
+      >
+        เมนูอาหาร
+      </a>
+      <a
+        href="#"
+        class="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-medium transition-colors"
+      >
+        ติดตามออเดอร์
+      </a>
+    </nav>
+
+    <!-- Cart Button -->
+    <button
+      class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-full font-semibold transition-all hover:scale-105 hover:shadow-lg active:scale-95 relative"
+      (click)="onCartClick()"
+    >
+      <span class="text-lg">🧺</span>
+      @if (cartItemCount() > 0) {
+      <span
+        class="absolute -top-1.5 -left-1.5 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-bounce"
+      >
+        {{ cartItemCount() }}
+      </span>
+      }
+      <span class="font-bold">{{ formatPrice(cartTotal()) }}</span>
+    </button>
+  </div>
+</header>

@@ -74,6 +74,13 @@
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- H2 Database -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         
         <!-- =================================================================
              Development Tools
@@ -99,10 +106,13 @@
              ================================================================= -->
         
         <!-- Spring Data Redis -->
+        <!-- Spring Data Redis (Removed) -->
+        <!--
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+        -->
         
         <!-- Spring Cache -->
         <dependency>

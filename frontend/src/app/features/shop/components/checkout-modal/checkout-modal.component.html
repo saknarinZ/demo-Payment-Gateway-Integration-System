@@ -1,0 +1,111 @@
+<!-- Checkout Modal - Smart Component -->
+<div
+  class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-[1000] p-0 sm:p-4"
+  (click)="onBackdropClick()"
+>
+  <div
+    class="bg-white rounded-t-2xl sm:rounded-2xl p-4 sm:p-6 w-full sm:max-w-md max-h-[95vh] sm:max-h-[90vh] overflow-y-auto relative animate-slideUp"
+    (click)="onModalClick($event)"
+  >
+    <!-- Drag Handle (Mobile) -->
+    <div class="flex justify-center sm:hidden mb-2">
+      <div class="w-10 h-1 bg-gray-300 rounded-full"></div>
+    </div>
+
+    <!-- Close Button -->
+    <button
+      class="absolute top-3 sm:top-4 right-3 sm:right-4 w-8 h-8 bg-gray-100 rounded-full hover:bg-gray-200 active:bg-gray-300 transition-colors touch-manipulation"
+      (click)="onClose()"
+    >
+      ✕
+    </button>
+
+    <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4 pr-8">
+      📝 ข้อมูลการสั่งอาหาร
+    </h2>
+
+    <!-- Order Summary Component -->
+    <app-order-summary [items]="items()" [total]="total()" />
+
+    <!-- Customer Form -->
+    <form class="space-y-3 sm:space-y-4" (ngSubmit)="onSubmit()">
+      <!-- Name Field -->
+      <div class="space-y-1">
+        <label for="name" class="block text-sm font-medium text-gray-700">
+          👤 ชื่อเล่น
+        </label>
+        <input
+          type="text"
+          id="name"
+          [ngModel]="customerName()"
+          (ngModelChange)="onNameChange($event)"
+          name="customerName"
+          placeholder="เช่น พี่ต้น, น้องมิ้นท์"
+          class="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base"
+        />
+      </div>
+
+      <!-- Phone Field -->
+      <div class="space-y-1">
+        <label for="phone" class="block text-sm font-medium text-gray-700">
+          📱 เบอร์โทรศัพท์
+        </label>
+        <input
+          type="tel"
+          id="phone"
+          inputmode="tel"
+          [ngModel]="customerPhone()"
+          (ngModelChange)="onPhoneChange($event)"
+          name="customerPhone"
+          placeholder="0xx-xxx-xxxx"
+          class="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base"
+        />
+      </div>
+
+      <!-- Table Number Field -->
+      <div class="space-y-1">
+        <label for="table" class="block text-sm font-medium text-gray-700">
+          🪑 หมายเลขโต๊ะ
+        </label>
+        <input
+          type="text"
+          id="table"
+          [ngModel]="tableNumber()"
+          (ngModelChange)="onTableChange($event)"
+          name="tableNumber"
+          placeholder="เช่น โต๊ะ 5"
+          class="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base"
+        />
+      </div>
+
+      <!-- Error Message -->
+      @if (error()) {
+      <div
+        class="p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+      >
+        ❌ {{ error() }}
+      </div>
+      }
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="w-full py-3.5 sm:py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl font-semibold text-base sm:text-lg flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-transform disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation"
+        [disabled]="!isFormValid() || processing()"
+      >
+        @if (processing()) {
+        <span
+          class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+        ></span>
+        กำลังดำเนินการ... } @else { 💳 ยืนยันและชำระเงิน ({{
+          formatPrice(total())
+        }}) }
+      </button>
+    </form>
+
+    <!-- Security Note -->
+    <p class="text-center text-xs sm:text-sm text-gray-500 mt-3 sm:mt-4 pb-2">
+      🔒 ข้อมูลของคุณปลอดภัย
+    </p>
+  </div>
+</div>

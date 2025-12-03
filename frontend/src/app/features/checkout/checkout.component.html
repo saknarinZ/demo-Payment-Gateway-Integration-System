@@ -1,0 +1,313 @@
+<div
+  class="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 p-4 flex items-center justify-center"
+>
+  <!-- Loading -->
+  @if (loading()) {
+  <div class="text-center text-white">
+    <div
+      class="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"
+    ></div>
+    <p>กำลังโหลดข้อมูล...</p>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (error() && !loading()) {
+  <div class="bg-white rounded-2xl p-8 text-center max-w-md">
+    <div class="text-5xl mb-4">❌</div>
+    <h2 class="text-xl font-bold text-red-600 mb-2">เกิดข้อผิดพลาด</h2>
+    <p class="text-gray-600 mb-6">{{ error() }}</p>
+    <a
+      href="/"
+      class="inline-block px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+      >กลับหน้าหลัก</a
+    >
+  </div>
+  }
+
+  <!-- Success -->
+  @if (success()) {
+  <div class="bg-white rounded-2xl p-8 text-center max-w-lg">
+    <div class="text-6xl mb-4">✅</div>
+    <h2 class="text-2xl font-bold text-green-600 mb-2">ชำระเงินสำเร็จ!</h2>
+    <p class="text-3xl font-bold text-gray-900 mb-6">{{ formattedAmount() }}</p>
+    <div class="bg-gray-50 rounded-lg p-4 mb-4 text-left">
+      <p class="text-gray-700 mb-2">
+        <strong>Reference ID:</strong> {{ payment()?.referenceId }}
+      </p>
+      <p class="text-gray-700">
+        <strong>วิธีชำระ:</strong> {{ selectedMethod() }}
+      </p>
+    </div>
+    <div class="text-gray-600">
+      <p class="text-xl mb-2">🎉 ขอบคุณที่ใช้บริการ</p>
+      <p>ใบเสร็จจะถูกส่งไปยังอีเมลของคุณ</p>
+    </div>
+  </div>
+  }
+
+  <!-- Payment Form -->
+  @if (payment() && !loading() && !error() && !success()) {
+  <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full overflow-hidden">
+    <!-- Header -->
+    <div
+      class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 text-center"
+    >
+      <h1 class="text-xl font-bold mb-2">💳 ชำระเงิน</h1>
+      <div class="opacity-90">
+        <span>Demo Shop</span>
+      </div>
+    </div>
+
+    <!-- Payment Info -->
+    <div class="p-6 border-b border-gray-200">
+      <div class="text-center mb-6">
+        <span class="text-sm text-gray-500 block mb-1">ยอดชำระ</span>
+        <span class="text-4xl font-bold text-gray-900">{{
+          formattedAmount()
+        }}</span>
+      </div>
+
+      <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+        <div class="flex justify-between py-2 border-b border-gray-200">
+          <span class="text-sm text-gray-500">Reference ID</span>
+          <span class="font-medium text-gray-900 text-right">{{
+            payment()?.referenceId
+          }}</span>
+        </div>
+        <div class="flex justify-between py-2 border-b border-gray-200">
+          <span class="text-sm text-gray-500">รายละเอียด</span>
+          <span class="font-medium text-gray-900 text-right">{{
+            payment()?.description || "ไม่ระบุ"
+          }}</span>
+        </div>
+        <div class="flex justify-between py-2 border-b border-gray-200">
+          <span class="text-sm text-gray-500">ชื่อลูกค้า</span>
+          <span class="font-medium text-gray-900 text-right">{{
+            payment()?.customerName
+          }}</span>
+        </div>
+        <div class="flex justify-between py-2">
+          <span class="text-sm text-gray-500">สถานะ</span>
+          <span
+            class="px-2 py-0.5 text-xs font-medium rounded-full"
+            [class]="
+              payment()?.status === 'COMPLETED'
+                ? 'bg-green-100 text-green-700'
+                : payment()?.status === 'PENDING'
+                ? 'bg-yellow-100 text-yellow-700'
+                : payment()?.status === 'CANCELLED'
+                ? 'bg-red-100 text-red-700'
+                : 'bg-gray-100 text-gray-700'
+            "
+          >
+            {{ getStatusText(payment()?.status || "") }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Already Paid -->
+    @if (payment()?.status !== 'PENDING') {
+    <div class="p-6 text-center">
+      @if (payment()?.status === 'COMPLETED') {
+      <div class="p-4 bg-green-50 rounded-lg text-green-700">
+        <span class="text-3xl block mb-2">✅</span>
+        <p>รายการนี้ได้ชำระเงินเรียบร้อยแล้ว</p>
+      </div>
+      } @else if (payment()?.status === 'CANCELLED') {
+      <div class="p-4 bg-red-50 rounded-lg text-red-700">
+        <span class="text-3xl block mb-2">🚫</span>
+        <p>รายการนี้ถูกยกเลิก</p>
+      </div>
+      } @else {
+      <div class="p-4 bg-blue-50 rounded-lg text-blue-700">
+        <span class="text-3xl block mb-2">ℹ️</span>
+        <p>สถานะ: {{ getStatusText(payment()?.status || "") }}</p>
+      </div>
+      }
+    </div>
+    }
+
+    <!-- Expired -->
+    @if (isExpired() && payment()?.status === 'PENDING') {
+    <div class="m-4 p-4 bg-yellow-50 rounded-lg text-yellow-700 text-center">
+      <span class="text-3xl block mb-2">⏰</span>
+      <p>ลิงก์ชำระเงินหมดอายุแล้ว</p>
+    </div>
+    }
+
+    <!-- Payment Methods -->
+    @if (payment()?.status === 'PENDING' && !isExpired()) {
+    <div class="p-6 border-b border-gray-200">
+      <h3 class="font-semibold text-gray-700 mb-4">เลือกวิธีชำระเงิน</h3>
+      <div class="grid grid-cols-2 gap-3">
+        @for (method of paymentMethods; track method.value) {
+        <button
+          class="flex flex-col items-center p-4 border-2 rounded-xl transition-all cursor-pointer"
+          [class]="
+            selectedMethod() === method.value
+              ? 'border-indigo-500 bg-indigo-50'
+              : 'border-gray-200 hover:border-indigo-300'
+          "
+          (click)="selectMethod(method.value)"
+        >
+          <span
+            class="text-2xl mb-2 transition-transform"
+            [class.scale-110]="selectedMethod() === method.value"
+            >{{ method.icon }}</span
+          >
+          <span class="font-semibold text-gray-900 text-sm mb-1">{{
+            method.label
+          }}</span>
+          <span class="text-xs text-gray-500 text-center">{{
+            method.description
+          }}</span>
+        </button>
+        }
+      </div>
+    </div>
+
+    <!-- Credit Card Form -->
+    @if (selectedMethod() === 'CREDIT_CARD') {
+    <div class="p-6 bg-gray-50">
+      <h4 class="font-medium text-gray-700 mb-4">ข้อมูลบัตร</h4>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">หมายเลขบัตร</label>
+          <input
+            type="text"
+            [ngModel]="cardNumber"
+            (input)="formatCardNumber($event)"
+            placeholder="1234 5678 9012 3456"
+            maxlength="19"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">วันหมดอายุ</label>
+            <input
+              type="text"
+              [ngModel]="cardExpiry"
+              (input)="formatExpiry($event)"
+              placeholder="MM/YY"
+              maxlength="5"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">CVC</label>
+            <input
+              type="text"
+              [(ngModel)]="cardCvc"
+              placeholder="123"
+              maxlength="3"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">ชื่อบนบัตร</label>
+          <input
+            type="text"
+            [(ngModel)]="cardName"
+            placeholder="SOMCHAI JAIDEE"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+      </div>
+      <p class="text-sm text-blue-600 mt-3">💡 ทดสอบ: ใส่ข้อมูลใดก็ได้</p>
+    </div>
+    }
+
+    <!-- PromptPay QR -->
+    @if (selectedMethod() === 'PROMPTPAY') {
+    <div class="p-6 text-center">
+      <h4 class="font-medium text-gray-700 mb-4">สแกน QR Code พร้อมเพย์</h4>
+      <div class="bg-gray-50 p-6 rounded-xl">
+        <div
+          class="w-48 h-48 mx-auto mb-4 bg-white border-2 border-gray-200 rounded-lg flex items-center justify-center"
+        >
+          <div class="text-center text-gray-500 text-2xl leading-loose">
+            📱<br />
+            QR Code<br />
+            พร้อมเพย์
+          </div>
+        </div>
+        <p class="text-2xl font-bold text-gray-900 mb-2">
+          {{ formattedAmount() }}
+        </p>
+        <p class="text-sm text-gray-500">สแกนด้วยแอปธนาคารของคุณ</p>
+      </div>
+    </div>
+    }
+
+    <!-- Bank Transfer -->
+    @if (selectedMethod() === 'BANK_TRANSFER') {
+    <div class="p-6">
+      <h4 class="font-medium text-gray-700 mb-4">โอนเงินไปยังบัญชี</h4>
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="flex gap-4">
+          <span class="text-3xl">🏦</span>
+          <div>
+            <strong class="block mb-1">ธนาคารกสิกรไทย</strong>
+            <p class="text-sm text-gray-600">เลขที่บัญชี: 123-4-56789-0</p>
+            <p class="text-sm text-gray-600">
+              ชื่อบัญชี: บริษัท เดโม ชอป จำกัด
+            </p>
+          </div>
+        </div>
+      </div>
+      <p class="mt-4 p-3 bg-yellow-50 rounded-lg text-yellow-700 text-sm">
+        ⚠️ โอนเงินแล้วกดปุ่มยืนยันด้านล่าง
+      </p>
+    </div>
+    }
+
+    <!-- E-Wallet -->
+    @if (selectedMethod() === 'E_WALLET') {
+    <div class="p-6">
+      <h4 class="font-medium text-gray-700 mb-4">เลือก E-Wallet</h4>
+      <div class="space-y-3">
+        <button
+          class="w-full flex items-center justify-center gap-2 p-4 border-2 border-gray-200 rounded-lg font-semibold hover:border-orange-400 hover:bg-orange-50 transition-colors"
+        >
+          <span>💚</span> TrueMoney
+        </button>
+        <button
+          class="w-full flex items-center justify-center gap-2 p-4 border-2 border-gray-200 rounded-lg font-semibold hover:border-green-400 hover:bg-green-50 transition-colors"
+        >
+          <span>💚</span> Rabbit LINE Pay
+        </button>
+      </div>
+    </div>
+    }
+
+    <!-- Pay Button -->
+    <div class="p-6 text-center">
+      <button
+        class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold text-lg flex items-center justify-center gap-2 hover:-translate-y-0.5 hover:shadow-lg transition-all disabled:bg-gray-300 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+        [disabled]="!canPay() || processing()"
+        (click)="processPayment()"
+      >
+        @if (processing()) {
+        <span
+          class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+        ></span>
+        กำลังดำเนินการ... } @else { ชำระเงิน {{ formattedAmount() }}
+        }
+      </button>
+      <p class="text-sm text-gray-500 mt-4">🔒 การชำระเงินปลอดภัยด้วย SSL</p>
+    </div>
+    }
+
+    <!-- Footer -->
+    <div class="p-4 text-center bg-gray-50 border-t border-gray-200">
+      <p class="text-sm text-gray-500">
+        Powered by <strong>Payment Gateway</strong>
+      </p>
+    </div>
+  </div>
+  }
+</div>

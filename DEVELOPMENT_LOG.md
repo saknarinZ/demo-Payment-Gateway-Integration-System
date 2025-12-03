@@ -281,6 +281,51 @@ frontend/src/app/
 
 ---
 
+### Phase 7: E-Commerce Features ✅ (3 ธันวาคม 2025)
+
+#### 7.1 Checkout Flow
+
+- [x] สร้าง `CheckoutComponent` - หน้าชำระเงินสำหรับลูกค้า
+- [x] เพิ่ม Payment Link ใน Payment Detail
+- [x] Copy Payment Link to Clipboard
+- [x] Open Checkout in new tab
+
+#### 7.2 Restaurant Demo Shop (Shopee-style)
+
+- [x] สร้าง `ShopComponent` - หน้าร้านอาหาร "ครัวคุณแม่"
+- [x] Menu Items พร้อมราคา (10 เมนู)
+- [x] Shopping Cart พร้อมแก้ไขจำนวน
+- [x] Customer Form พร้อม Signals
+- [x] Auto-create Payment → Redirect to Checkout
+
+#### 7.3 UI/UX Improvements
+
+- [x] ปรับสีหลักเป็น `#0264e8`
+- [x] Gradient backgrounds
+- [x] Responsive design
+- [x] Form validation with Signals
+
+#### 7.4 Bug Fixes
+
+- [x] แก้ไข Form signals ให้ reactive (ngModel → signal binding)
+- [x] แก้ไขปุ่ม "ยืนยันและชำระเงิน" กดไม่ได้
+
+**โครงสร้างที่เพิ่มใหม่:**
+
+```
+frontend/src/app/features/
+├── checkout/
+│   ├── checkout.component.ts
+│   ├── checkout.component.html
+│   └── checkout.component.scss
+└── shop/
+    ├── shop.component.ts
+    ├── shop.component.html
+    └── shop.component.scss
+```
+
+---
+
 ## 🔧 API Endpoints
 
 ### Payments
@@ -350,6 +395,7 @@ docker-compose down -v
 | Service      | URL                                   |
 | ------------ | ------------------------------------- |
 | Frontend     | http://localhost:80                   |
+| Demo Shop    | http://localhost/shop                 |
 | Backend API  | http://localhost:8080/api/v1          |
 | Swagger UI   | http://localhost:8080/swagger-ui.html |
 | OpenAPI JSON | http://localhost:8080/api-docs        |
@@ -436,11 +482,11 @@ docker-compose down -v
 | Metric              | Count         |
 | ------------------- | ------------- |
 | Backend Files       | ~25 files     |
-| Frontend Components | 4 components  |
+| Frontend Components | 6 components  |
 | Database Tables     | 5 tables      |
 | API Endpoints       | ~15 endpoints |
 | Redis Caches        | 7 caches      |
-| Lines of Code       | ~4,000+ lines |
+| Lines of Code       | ~5,000+ lines |
 
 ---
 
@@ -451,4 +497,4 @@ docker-compose down -v
 
 ---
 
-_Last Updated: December 2, 2025_
+_Last Updated: December 3, 2025_

@@ -53,6 +53,7 @@ public class MerchantService {
         // สร้าง API Key และ Secret
         String apiKey = generateApiKey();
         String apiSecret = generateApiSecret();
+        String webhookSecret = generateWebhookSecret();
         
         // ตรวจสอบว่า API Key ไม่ซ้ำ
         while (merchantRepository.existsByApiKey(apiKey)) {
@@ -65,6 +66,7 @@ public class MerchantService {
             .email(request.email())
             .phone(request.phone())
             .webhookUrl(request.webhookUrl())
+            .webhookSecret(webhookSecret)
             .apiKey(apiKey)
             .apiSecret(apiSecret)
             .isActive(true)
@@ -176,6 +178,17 @@ public class MerchantService {
         secureRandom.nextBytes(bytes);
         String randomPart = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
         return "sk_live_" + randomPart.substring(0, 56);
+    }
+
+    /**
+     * สร้าง Webhook Secret (40 characters)
+     * รูปแบบ: whsec_xxxxxxxx
+     */
+    private String generateWebhookSecret() {
+        byte[] bytes = new byte[32];
+        secureRandom.nextBytes(bytes);
+        String randomPart = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+        return "whsec_" + randomPart.substring(0, 34);
     }
 
     /**

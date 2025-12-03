@@ -1,0 +1,60 @@
+<!-- Cart Item Row - Presentational Component -->
+<div
+  class="flex items-center gap-2 sm:gap-3 pb-2 sm:pb-3 border-b border-gray-100"
+>
+  <!-- Image -->
+  <div
+    class="flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-gray-100"
+  >
+    @if (isImage(cartItem().item.image)) {
+    <img
+      [src]="cartItem().item.image"
+      [alt]="cartItem().item.name"
+      class="w-full h-full object-cover"
+    />
+    } @else {
+    <div
+      class="w-full h-full flex items-center justify-center text-xl sm:text-2xl bg-gradient-to-br from-orange-50 to-orange-200"
+    >
+      {{ cartItem().item.image }}
+    </div>
+    }
+  </div>
+
+  <!-- Info -->
+  <div class="flex-1 min-w-0">
+    <span class="block text-xs sm:text-sm font-medium text-gray-800 truncate">
+      {{ cartItem().item.name }}
+    </span>
+    <span class="text-xs sm:text-sm text-blue-600 font-semibold">
+      {{ formatPrice(cartItem().item.price) }}
+    </span>
+  </div>
+
+  <!-- Quantity Controls -->
+  <div class="flex items-center gap-1 sm:gap-2">
+    <button
+      class="w-7 h-7 sm:w-8 sm:h-8 border border-gray-300 rounded bg-white hover:bg-gray-100 active:bg-gray-200 font-semibold text-sm sm:text-base touch-manipulation"
+      (click)="decrement()"
+    >
+      −
+    </button>
+    <span class="text-sm font-medium w-5 text-center">{{
+      cartItem().quantity
+    }}</span>
+    <button
+      class="w-7 h-7 sm:w-8 sm:h-8 border border-gray-300 rounded bg-white hover:bg-gray-100 active:bg-gray-200 font-semibold text-sm sm:text-base touch-manipulation"
+      (click)="increment()"
+    >
+      +
+    </button>
+  </div>
+
+  <!-- Remove Button -->
+  <button
+    class="text-red-500 hover:text-red-600 active:text-red-700 text-base sm:text-lg p-1.5 sm:p-2 touch-manipulation"
+    (click)="onRemove()"
+  >
+    ✕
+  </button>
+</div>
