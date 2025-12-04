@@ -24,15 +24,15 @@
 
 ### Tech Stack
 
-| Layer      | Technology              | Version |
-| ---------- | ----------------------- | ------- |
-| Backend    | Java LTS                | 21      |
-| Backend    | Spring Boot             | 3.4+    |
-| Frontend   | Angular (Signals)       | 19+     |
-| Styling    | TailwindCSS             | 4.0     |
-| Database   | MySQL                   | 8.0     |
-| Cache      | Redis                   | 7       |
-| Container  | Docker & Docker Compose | Latest  |
+| Layer     | Technology              | Version |
+| --------- | ----------------------- | ------- |
+| Backend   | Java LTS                | 21      |
+| Backend   | Spring Boot             | 3.4+    |
+| Frontend  | Angular (Signals)       | 19+     |
+| Styling   | TailwindCSS             | 4.0     |
+| Database  | MySQL                   | 8.0     |
+| Cache     | Redis                   | 7       |
+| Container | Docker & Docker Compose | Latest  |
 
 ### สถาปัตยกรรม (Architecture)
 
@@ -67,13 +67,13 @@
 
 3. **เข้าใช้งาน Application**
 
-   | Service       | URL                                   |
-   | ------------- | ------------------------------------- |
-   | 🏠 Frontend   | http://localhost                      |
-   | 🍜 Demo Shop  | http://localhost/shop                 |
-   | 🔌 Backend API| http://localhost:8080/api/v1          |
-   | 📚 Swagger UI | http://localhost:8080/swagger-ui.html |
-   | ❤️ Health     | http://localhost:8080/actuator/health |
+   | Service        | URL                                   |
+   | -------------- | ------------------------------------- |
+   | 🏠 Frontend    | http://localhost                      |
+   | 🍜 Demo Shop   | http://localhost/shop                 |
+   | 🔌 Backend API | http://localhost:8080/api/v1          |
+   | 📚 Swagger UI  | http://localhost:8080/swagger-ui.html |
+   | ❤️ Health      | http://localhost:8080/actuator/health |
 
 ### หยุดการทำงาน
 
@@ -139,28 +139,28 @@ Payment Gateway Integration System/
 
 ### Payments
 
-| Method | Endpoint                       | Description          |
-| ------ | ------------------------------ | -------------------- |
-| GET    | `/api/v1/payments`             | รายการ payments      |
-| GET    | `/api/v1/payments/{id}`        | ดู payment ตาม ID    |
-| POST   | `/api/v1/payments`             | สร้าง payment ใหม่   |
-| PUT    | `/api/v1/payments/{id}`        | อัพเดท payment       |
-| DELETE | `/api/v1/payments/{id}`        | ลบ payment           |
-| POST   | `/api/v1/payments/{id}/refund` | ขอ refund            |
+| Method | Endpoint                       | Description        |
+| ------ | ------------------------------ | ------------------ |
+| GET    | `/api/v1/payments`             | รายการ payments    |
+| GET    | `/api/v1/payments/{id}`        | ดู payment ตาม ID  |
+| POST   | `/api/v1/payments`             | สร้าง payment ใหม่ |
+| PUT    | `/api/v1/payments/{id}`        | อัพเดท payment     |
+| DELETE | `/api/v1/payments/{id}`        | ลบ payment         |
+| POST   | `/api/v1/payments/{id}/refund` | ขอ refund          |
 
 ### Merchants
 
-| Method | Endpoint                 | Description         |
-| ------ | ------------------------ | ------------------- |
-| GET    | `/api/v1/merchants`      | รายการร้านค้า       |
-| GET    | `/api/v1/merchants/{id}` | ดูร้านค้าตาม ID     |
-| POST   | `/api/v1/merchants`      | สร้างร้านค้าใหม่    |
+| Method | Endpoint                 | Description      |
+| ------ | ------------------------ | ---------------- |
+| GET    | `/api/v1/merchants`      | รายการร้านค้า    |
+| GET    | `/api/v1/merchants/{id}` | ดูร้านค้าตาม ID  |
+| POST   | `/api/v1/merchants`      | สร้างร้านค้าใหม่ |
 
 ### Webhooks
 
-| Method | Endpoint                   | Description          |
-| ------ | -------------------------- | -------------------- |
-| POST   | `/api/v1/webhooks/payment` | รับ webhook          |
+| Method | Endpoint                   | Description |
+| ------ | -------------------------- | ----------- |
+| POST   | `/api/v1/webhooks/payment` | รับ webhook |
 
 ### System
 
@@ -175,12 +175,15 @@ Payment Gateway Integration System/
 ## 📸 Screenshots
 
 ### Demo Shop (ครัวคุณแม่)
+
 หน้าร้านอาหารสำหรับทดสอบ Payment Flow
 
 ### Dashboard
+
 หน้า Dashboard แสดงสถิติ Payment
 
-### Payment Management  
+### Payment Management
+
 จัดการ Payment พร้อม Payment Link
 
 ---

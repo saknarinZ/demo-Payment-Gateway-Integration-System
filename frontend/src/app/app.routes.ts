@@ -73,6 +73,16 @@ export const routes: Routes = [
     title: "Demo Shop - E-Commerce",
   },
 
+  // Omise Checkout Route - หน้าชำระเงินผ่าน Omise (Real API)
+  {
+    path: "omise-checkout",
+    loadComponent: () =>
+      import("./features/omise-checkout/omise-checkout-demo.component").then(
+        (m) => m.OmiseCheckoutDemoComponent
+      ),
+    title: "Secure Checkout - Omise Payment",
+  },
+
   // Wildcard Route - หน้าที่ไม่พบ
   {
     path: "**",

@@ -167,6 +167,25 @@ payment:
     base-path: /api/v1
 
 # =============================================================================
+# Omise (Opn Payments) Configuration
+# ดู API Keys ได้ที่: https://dashboard.omise.co/settings/keys
+# =============================================================================
+omise:
+  # Public Key - ใช้สำหรับ Frontend Tokenization
+  # รูปแบบ: pkey_test_xxxxx (Test) หรือ pkey_xxxxx (Live)
+  public-key: ${OMISE_PUBLIC_KEY:pkey_test_your_public_key_here}
+  
+  # Secret Key - ใช้สำหรับ Backend API Calls
+  # รูปแบบ: skey_test_xxxxx (Test) หรือ skey_xxxxx (Live)
+  secret-key: ${OMISE_SECRET_KEY:skey_test_your_secret_key_here}
+  
+  # Webhook Secret - สำหรับ Verify Webhook Signature
+  webhook-secret: ${OMISE_WEBHOOK_SECRET:}
+  
+  # API Version (Optional)
+  api-version: "2019-05-29"
+
+# =============================================================================
 # SpringDoc OpenAPI / Swagger Configuration
 # =============================================================================
 springdoc:

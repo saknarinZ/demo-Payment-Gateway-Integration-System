@@ -132,6 +132,16 @@
         </dependency>
         
         <!-- =================================================================
+             Omise (Opn Payments) Java SDK
+             https://github.com/omise/omise-java
+             ================================================================= -->
+        <dependency>
+            <groupId>co.omise</groupId>
+            <artifactId>omise-java</artifactId>
+            <version>4.2.0</version>
+        </dependency>
+        
+        <!-- =================================================================
              Testing
              ================================================================= -->
         

@@ -70,7 +70,7 @@ services:
 
   # ===========================================================================
   # Spring Boot Backend Service
-  # Java 21 พร้อม Virtual Threads
+  # Java 21 พร้อม Virtual Threads + Omise Integration
   # ===========================================================================
   backend:
     build:
@@ -78,6 +78,8 @@ services:
       dockerfile: Dockerfile
     container_name: payment-backend
     restart: unless-stopped
+    env_file:
+      - .env  # โหลด Environment Variables จากไฟล์ .env
     environment:
       # Database Connection
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/${MYSQL_DATABASE:-payment_gateway}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Bangkok
@@ -91,7 +93,13 @@ services:
       SPRING_JPA_SHOW_SQL: "true"
       # Virtual Threads - เปิดใช้งาน Java 21 Virtual Threads
       SPRING_THREADS_VIRTUAL_ENABLED: "true"
-      # Payment Gateway Security
+      # =======================================================================
+      # Omise (Opn Payments) Configuration
+      # =======================================================================
+      OMISE_PUBLIC_KEY: ${OMISE_PUBLIC_KEY}
+      OMISE_SECRET_KEY: ${OMISE_SECRET_KEY}
+      OMISE_WEBHOOK_SECRET: ${OMISE_WEBHOOK_SECRET}
+      # Legacy Webhook Secret
       PAYMENT_WEBHOOK_SECRET: ${PAYMENT_WEBHOOK_SECRET:-your-webhook-secret-key}
       # Server Settings
       SERVER_PORT: 8080
